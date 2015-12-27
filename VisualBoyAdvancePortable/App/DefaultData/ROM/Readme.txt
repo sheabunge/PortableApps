@@ -1,0 +1,1 @@
+In the ROM folder, place files with a .gba, .agb or .bin file extention.

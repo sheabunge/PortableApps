@@ -1,0 +1,1 @@
+In the GB ROM folder, place files with a .gb, .sgb, .cgb or .gbc file extention.
