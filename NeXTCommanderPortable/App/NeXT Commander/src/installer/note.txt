@@ -1,0 +1,1 @@
+I made the header images myself (from the icons), and I changed the "Nullsoft Install System" on the welcome images to a darker color. The file "floppy.7z" is the original package.
