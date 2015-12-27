@@ -1,0 +1,42 @@
+/*   HiTechnic Experimenter's Kit for the SuperPro
+
+Experiment 5 - Ambient Canceling Light Sensor
+
+This program reads the light level with a reference light source on and also off,
+calculates the background light level to create an ambient (background) canceling light sensor.
+
+*/
+
+#define SUPERPRO_PORT IN_1
+
+task main()
+{
+  int valueOn, valueOff;
+
+  SetSensorLowspeed(SUPERPRO_PORT); // set sensor port 1 to low speed serial (I2C)
+  Wait(100);
+
+  // Set B0 for output
+  SetSensorHTSuperProDigitalControl(SUPERPRO_PORT, DIGI_PIN0);
+  
+  while (true) {
+    // Turn off LED
+    SetSensorHTSuperProDigital(SUPERPRO_PORT, 0);
+    Wait(30);
+    // Read the light sensor
+    valueOff = SensorHTSuperProAnalog(SUPERPRO_PORT, HTSPRO_A0);
+    // Turn on LED
+    SetSensorHTSuperProDigital(SUPERPRO_PORT, DIGI_PIN0);
+    Wait(30);
+    // Read the light sensor
+    valueOn = SensorHTSuperProAnalog(SUPERPRO_PORT, HTSPRO_A0);
+    TextOut(0, LCD_LINE1, "LightOn :     ");
+    NumOut(9*6, LCD_LINE1, valueOn);
+    TextOut(0, LCD_LINE2, "LightOff:     ");
+    NumOut(9*6, LCD_LINE2, valueOff);
+    TextOut(0, LCD_LINE3, "Delta   :     ");
+    NumOut(9*6, LCD_LINE3, valueOn - valueOff);
+  }
+}
+
+

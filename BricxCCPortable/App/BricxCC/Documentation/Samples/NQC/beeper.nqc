@@ -1,0 +1,32 @@
+// make our press count global so we can access it from BricxCC
+int PressCount;
+
+task beeper()
+{
+  // beep forever
+  while (true)
+  {
+    PlayTone(440, 50);
+    Wait(100);
+  }
+}
+
+task main()
+{
+  // configure our sensor as a touch sensor
+  SetSensor(SENSOR_1,SENSOR_TOUCH);
+  // start our beeper task
+  start beeper;
+  // check for 6 touch sensor presses
+  while (PressCount <= 6)
+  {
+    // a press == pressed then not pressed
+		until(SENSOR_1);
+		until(!SENSOR_1);
+		// increment our press count
+		PressCount++;
+  }
+  // now stop beeping
+  stop beeper;
+}
+

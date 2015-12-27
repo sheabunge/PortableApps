@@ -1,0 +1,26 @@
+program Test {
+
+  sensor one on 1
+  sensor two on 2
+  
+  main {
+
+    local x = 0
+    const DATA_SIZE = 100
+    
+    clear data DATA_SIZE
+    
+    while x < 80
+    {
+      // write to datalog
+      log one
+      if x is 40..50
+      {
+        log two
+      }
+      
+      x += 1
+      
+    }
+  }
+}

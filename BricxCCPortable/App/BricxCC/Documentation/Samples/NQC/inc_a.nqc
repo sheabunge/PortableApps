@@ -1,0 +1,14 @@
+#pragma noinit
+
+int a; // global variable
+
+task main()
+{
+  a++;
+  int x[16]; // there are only 16 local variables
+  int y = 10; // so the rest are global variables
+  int y1 = 10;
+  int y2 = 10;
+  int y3 = 10;
+}
+

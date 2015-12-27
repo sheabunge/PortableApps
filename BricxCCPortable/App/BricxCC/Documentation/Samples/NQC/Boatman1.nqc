@@ -1,0 +1,112 @@
+/*
+  NQC 2.3r1 code
+  CyberMaster target
+  This code copyright (C) J P Brown, 2001.  
+  
+  OUT_L = OUT_A
+  OUT_R = OUT_B
+  OUT_X = OUT_C
+  
+  Ensure that oars are in the *raised* position before executing program
+*/
+
+#define left 1
+#define leftmask 0xfffe
+#define right 2
+#define rightmask 0xfffd
+
+#define bow OUT_FWD
+#define stern OUT_REV
+
+#define forrard OnFwd(OUT_C); \
+                until(foretouch == 1); \
+                Float(OUT_C);
+
+#define aft OnRev(OUT_C); \
+            until(afttouch == 1); \
+            Float(OUT_C);
+
+#define foretouch SENSOR_2
+#define afttouch SENSOR_3
+
+#define oars OUT_A | OUT_B
+
+int command = left + right;
+int state= 0;
+int lcnt = 0;
+int rcnt = 0;
+
+task leftoar()
+  {
+  state |= left;
+  if (TachoCount(OUT_L) < lcnt)
+     {
+     On(OUT_L);
+     until( TachoCount(OUT_L) >= lcnt);
+     Off(OUT_L);
+     }
+  state &= leftmask;
+  }
+
+task rightoar()
+  {
+  state |= right;
+  if (TachoCount(OUT_R) < rcnt)
+     {
+     On(OUT_R);
+     until( TachoCount(OUT_R) >= rcnt);
+     Off(OUT_R);
+     }
+  state &= rightmask;
+  }
+
+task main()
+  {
+  int testl;
+  int testr;
+  
+  SetPower ( oars | OUT_C, OUT_FULL);
+  SetDirection( oars, OUT_REV );
+  ClearTachoCounter( oars );
+  
+  
+  while(true)
+    {
+    testl = command & left;
+    testr = command & right;
+    
+    if(testl) lcnt +=25;
+    if(testr) rcnt += 25;
+    
+    // move to stern
+    aft;
+    
+    // put oar(s) in water
+    start rightoar;
+    start leftoar;
+    until(state == 0);
+    
+    if(testl) lcnt +=25;
+    if(testr) rcnt += 25;
+    
+    // move back to bow
+    forrard;
+
+    // take oar(s) out of water
+    start leftoar;
+    start rightoar;
+    until(state == 0);
+    
+    if( lcnt == 32750 ) 
+      {
+      ClearTachoCounter( OUT_L );
+      lcnt = 0; 
+      }
+    if( rcnt == 32750 ) 
+      {
+      ClearTachoCounter( OUT_R );
+      rcnt = 0; 
+      }
+      
+    }
+  }

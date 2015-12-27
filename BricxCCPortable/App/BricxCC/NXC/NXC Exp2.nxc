@@ -1,0 +1,53 @@
+/*   HiTechnic Experimenter's Kit for the SuperPro
+
+Experiment - 2 Six LEDs and a Potentiometer
+
+This program reads the analog value of a potentiometer and outputs a
+digital value to one of six LEDs.
+
+*/
+
+#define SUPERPRO_PORT IN_1
+
+task main()
+{
+  int value;
+  byte OutputBit;
+
+  SetSensorLowspeed(SUPERPRO_PORT); // set sensor port 1 to low speed serial (I2C)
+  Wait(100);
+
+  // Set B0-B5 for output
+  SetSensorHTSuperProDigitalControl(SUPERPRO_PORT, 0x3f);
+  Wait(1000);
+
+  while (true) {
+    value = SensorHTSuperProAnalog(SUPERPRO_PORT, HTSPRO_A0);
+    TextOut(0, LCD_LINE1, "A0:     ");
+    NumOut(3*6, LCD_LINE1, value);
+    
+    switch(value/128) {
+    case 0:
+      OutputBit = 1;
+      break;
+    case 1:
+      OutputBit = 2;
+      break;
+    case 2:
+      OutputBit = 4;
+      break;
+    case 3:
+      OutputBit = 8;
+      break;
+    case 4:
+      OutputBit = 16;
+      break;
+    default:
+      OutputBit = 32;
+      break;
+    }
+    SetSensorHTSuperProDigital(SUPERPRO_PORT, OutputBit);
+    Wait(50);
+  }
+}
+

@@ -1,0 +1,65 @@
+program TestRCX2 {
+  #include "Spybot.h"
+/*
+
+  var j = 0
+  var k = 0
+  var l = 0
+  var m = 0
+*/
+  var i = 0
+
+  sub modify(p, step) { local n = p^ n += step  p^ = n }
+
+  led ScanUp { forever {
+    led cRed1 for 10
+    led cRed3 for 10
+    }
+  }
+
+  led ScanDown {
+    led 1 for 10
+    led 4 for 10
+  }
+
+  fx beep { forever {
+    gate 1 in 10
+    glide 294..660 for 60
+    gate off
+    wait 255
+    vibrato 294..660 for 60
+    fixed wait 100
+    fixed tone 500 for 50
+    tone 300 for 50  }
+  }
+
+  main {
+    fx.sound = i
+    fx.time = 10
+    tone 500 for 10 tone 300 for 10
+    sound beep
+    display ScanUp
+    display ScanDown
+//     display ScanUp wait 5
+//     display ScanDown wait 5
+/*
+     i^ = eeprom[0x80+i]
+     i += 1
+     i^ = eeprom[0x80+i]
+     i += 1
+     i^ = eeprom[0x80+i]
+     i += 1
+     i^ = eeprom[0x80+i]
+     i += 1
+     i^ = eeprom[0x80+i]
+     i += 1
+     i^ = eeprom[0x80+i]
+     i += 1
+     i^ = eeprom[0x80+i]
+     i += 1
+     i^ = eeprom[0x80+i]
+     i += 1
+*/
+  }
+
+}

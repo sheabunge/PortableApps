@@ -1,0 +1,33 @@
+program test {
+#include <RCX2.h>
+//#include <RCX2MLT.h>
+var x = 0
+
+sub DebugIt(y) { sound y }
+
+sub Test(x, y)
+{
+  power B x
+  DebugIt(y)
+  sound y
+}
+
+main {
+ x = 4
+// bbs_GlobalReset([A B C])
+ try {
+  power [A C] 8
+  direction [ A C ] [ ]
+  sound 2
+  Test(5, 3)
+ } retry on fail
+ try {
+  forever {
+   on [ A C  ]
+  }
+ } retry on fail
+}
+
+
+}
+

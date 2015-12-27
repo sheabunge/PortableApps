@@ -1,0 +1,39 @@
+/*   HiTechnic Experimenter's Kit for the SuperPro
+
+Experiment - 9 Speaker
+
+This program  first plays a sequence of three ascending
+notes using just O0 and then three pairs of descending
+notes using both O0 and O1.
+
+*/
+
+#define SUPERPRO_PORT IN_1
+
+task main()
+{
+  SetSensorLowspeed(SUPERPRO_PORT); // set sensor port 1 to low speed serial (I2C)
+  Wait(100);
+
+  SetSensorHTSuperProAnalogOut(SUPERPRO_PORT, HTSPRO_DAC0, DAC_MODE_SQUAREWAVE, TONE_C4, 1023);
+  Wait(200);
+  SetSensorHTSuperProAnalogOut(SUPERPRO_PORT, HTSPRO_DAC0, DAC_MODE_SQUAREWAVE, TONE_DS4, 1023);
+  Wait(400);
+  SetSensorHTSuperProAnalogOut(SUPERPRO_PORT, HTSPRO_DAC0, DAC_MODE_SQUAREWAVE, TONE_E4, 1023);
+  Wait(200);
+  SetSensorHTSuperProAnalogOut(SUPERPRO_PORT, HTSPRO_DAC0, DAC_MODE_SQUAREWAVE, 1, 0);
+  Wait(200);
+
+  SetSensorHTSuperProAnalogOut(SUPERPRO_PORT, HTSPRO_DAC0, DAC_MODE_SQUAREWAVE, TONE_F4, 1023);
+  SetSensorHTSuperProAnalogOut(SUPERPRO_PORT, HTSPRO_DAC1, DAC_MODE_SQUAREWAVE, TONE_A4, 1023);
+  Wait(200);
+  SetSensorHTSuperProAnalogOut(SUPERPRO_PORT, HTSPRO_DAC0, DAC_MODE_SQUAREWAVE, TONE_E4, 1023);
+  SetSensorHTSuperProAnalogOut(SUPERPRO_PORT, HTSPRO_DAC1, DAC_MODE_SQUAREWAVE, TONE_G4, 1023);
+  Wait(200);
+  SetSensorHTSuperProAnalogOut(SUPERPRO_PORT, HTSPRO_DAC0, DAC_MODE_SQUAREWAVE, TONE_C4, 1023);
+  SetSensorHTSuperProAnalogOut(SUPERPRO_PORT, HTSPRO_DAC1, DAC_MODE_SQUAREWAVE, TONE_E4, 1023);
+  Wait(400);
+  SetSensorHTSuperProAnalogOut(SUPERPRO_PORT, HTSPRO_DAC0, DAC_MODE_SQUAREWAVE, 1, 0);
+  SetSensorHTSuperProAnalogOut(SUPERPRO_PORT, HTSPRO_DAC1, DAC_MODE_SQUAREWAVE, 1, 0);
+}
+

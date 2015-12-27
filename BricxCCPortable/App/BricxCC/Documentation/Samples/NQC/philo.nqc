@@ -1,0 +1,10 @@
+#pragma noinit
+
+int Buf [20];
+task main ()
+{
+  int i;
+  i=0;
+  Buf[i] = 55;
+}
+

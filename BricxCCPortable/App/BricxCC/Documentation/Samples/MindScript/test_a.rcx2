@@ -1,0 +1,53 @@
+program Monorail_RCX1{
+// Declarations
+//
+sensor sw1 on 1 // sensor on gear box (END station)
+sensor sw2 on 2 // sensor to detect monorail into  ENDstation
+sensor sw3 on 3 // sensor on gear box (MIDDLE station)
+sensor sw4 on 2 // sensor to detect monorail into MIDDLE station
+sw1 is switch as boolean
+sw2 is switch as boolean
+sw3 is switch as boolean
+sw4 is switch as boolean
+//
+var direction_ // direction of monorail
+const delay1=1500 // minimum stop time in station (10 seconds)
+const delay2=3000 // maximum stop time in station (30 seconds)
+//
+output motor1 on 1  // motor connected to physical port A
+output motor2 on 2  // motor connected to physical port B
+//
+event endstationtime when  {sw1 &= sw2).pressed
+event middlestationtime when {sw3 &= sw4}.pressed
+//
+// End of Declarations
+//
+main {
+start endstation
+start middlestation
+}
+//
+// Monorail is IN END STATION
+watcher endstation monitor endstationtime {
+wait delay2 // stoptime = 30 seconds
+power motor1 6 // motor power = 6
+forward motor1 for 200 // enable monorail to drive away - motor on 2sec
+of motor1 for 50 // stop motor 0.5sec
+while sw1 is not closed backward motor1 // return to stop position
+}
+// Monorail is IN MIDDLE STATION
+watcher middlestation monitor middlestationtime {
+wait delay1 // stoptime = 15 seconds
+power motor2 6 // motor power = 6
+if direction=0
+forward motor2 for 200 // enable monorail to drive away - motor on 2sec
+of motor2 for 50 // stop motor 0.5sec
+while sw3 is not closed backward motor2 // return to stop position
+direction_=1
+else
+backward motor2 for 200 // enable monorail to drive away
+of motor2 for 50 // stop motor
+while sw3 is not closed forward motor2 // return to stop position
+direction_=0 // Monorail left END station
+}
+

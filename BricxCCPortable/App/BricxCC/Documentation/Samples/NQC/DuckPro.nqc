@@ -1,0 +1,200 @@
+// DuckPro
+// 2005.02.05
+
+#define zMotor OUT_A
+#define yMotor OUT_C
+#define breakMotor OUT_B
+
+#define zEncoder SENSOR_1
+#define yEncoder SENSOR_3
+#define homeProx SENSOR_2
+
+#define zSlow 4
+#define ySlow 3
+#define zSlowPwr 1
+#define ySlowPwr 3
+
+#define zCheck until(zDone==1);Wait(3);until(zDone==1)
+#define yCheck until(yDone==1);Wait(3);until(yDone==1);
+#define breakOff OnFwd(breakMotor); Wait(25); OnRev(breakMotor); Wait(25); Off(breakMotor);
+
+int zPos;
+int yPos;
+int zSlowPos;
+int ySlowPos;
+int zDone;
+int yDone;
+
+task main()
+{
+  Off(zMotor+yMotor);
+  SetPower(zMotor+yMotor+breakMotor, 7);
+  SetSensorType(zEncoder, SENSOR_TYPE_ROTATION);
+  SetSensorType(yEncoder, SENSOR_TYPE_ROTATION);
+  SetSensorType(homeProx, SENSOR_TYPE_TOUCH);
+  home();
+  breakOff;
+  while(true)
+  {
+  Wait(25);
+  // pick head.
+  zPos=-41;
+  zCheck;
+  yPos=70;
+  yCheck;
+  yPos=20;
+  yCheck;
+  // pick beak.
+  zPos=-86;
+  zCheck;
+  yPos=65;
+  yCheck;
+  yPos=10;
+  yCheck;
+  // pick body.
+  zPos=-162;
+  zCheck;
+  yPos=53;
+  yCheck;
+  yPos=0;
+  yCheck;
+  zPos=-257;
+  zCheck;
+  breakOff;
+  home();
+  }
+}
+
+task movez()
+{
+  while(true)
+  {
+    // for moving forward.
+    if(zPos < (zEncoder-1))
+    {
+      zDone=0;
+      zSlowPos=zPos+zSlow;
+      OnRev(zMotor);
+      until(zEncoder<zSlowPos);
+      SetPower(zMotor, zSlowPwr);
+      until(zEncoder<=zPos)
+      {
+        Off(zMotor);
+        Wait(2);
+        On(zMotor);
+        Wait(1);
+      }
+      Off(zMotor);
+      SetPower(zMotor,7);
+      zDone=1;
+    }
+    // for moving backward.
+    if(zPos > (zEncoder+1))
+    {
+      zDone=0;
+      zSlowPos=zPos-zSlow;
+      OnFwd(zMotor);
+      until(zEncoder>zSlowPos);
+      SetPower(zMotor, zSlowPwr);
+      until(zEncoder>=zPos)
+      {
+        Off(zMotor);
+        Wait(2);
+        On(zMotor);
+        Wait(1);
+      }
+      Off(zMotor);
+      SetPower(zMotor,7);
+      zDone=1;
+    }
+  }
+}
+
+task movey()
+{
+  while(true)
+  {
+    // for moving upward.
+    if(yPos < (yEncoder-1))
+    {
+      yDone=0;
+      ySlowPos=yPos+ySlow;
+      OnRev(yMotor);
+      until(yEncoder<ySlowPos);
+      SetPower(yMotor, ySlowPwr);
+      until(yEncoder<=yPos)
+      {
+        Off(yMotor);
+        Wait(3);
+        On(yMotor);
+        Wait(1);
+      }
+      Off(yMotor);
+      SetPower(yMotor,7);
+      yDone=1;
+    }
+    // for moving downward.
+    if(yPos > (yEncoder+1))
+    {
+      yDone=0;
+      ySlowPos=yPos-ySlow;
+      OnFwd(yMotor);
+      until(yEncoder>ySlowPos);
+      SetPower(yMotor, ySlowPwr);
+      until(yEncoder>=yPos)
+      {
+        Off(yMotor);
+        Wait(3);
+        On(yMotor);
+        Wait(1);
+      }
+      Off(yMotor);
+      SetPower(yMotor,7);
+      yDone=1;
+    }
+  }
+}
+
+sub home()
+{
+  stop movez;
+  stop movey;
+  if(homeProx == 1)
+  {
+    OnRev(zMotor);
+    OnFwd(yMotor);
+    until(homeProx == 0);
+    Off(zMotor+yMotor);
+  }
+  OnRev(yMotor);
+  until(homeProx == 1);
+  OnFwd(yMotor);
+  until(homeProx == 0)
+  {
+    Off(yMotor);
+    Wait(1);
+    On(yMotor);
+    Wait(1);
+  }
+  Off(yMotor);
+  OnFwd(zMotor);
+  until(homeProx == 1);
+  OnRev(zMotor);
+  until(homeProx == 0)
+  {
+    Off(zMotor);
+    Wait(1);
+    On(zMotor);
+    Wait(1);
+  }
+  Off(zMotor);
+  Wait(10);
+  ClearSensor(zEncoder);
+  ClearSensor(yEncoder);
+  zPos=0;
+  yPos=0;
+
+  start movez;
+  start movey;
+}
+

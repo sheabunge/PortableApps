@@ -1,0 +1,30 @@
+#pragma noinit
+
+#define ROWS 2
+#define COLS 10
+
+int data[20]; // 2x10 two-dimensional array
+int * ptr;
+
+void MyFunc(int * p, int & r, int & c, int & val)
+{
+  int * tmp = p;
+  // point tmp to specified row and column
+  tmp += (r*COLS) + c;
+  *tmp = val;
+}
+
+task main()
+{
+  ptr = &data[0];
+  int val = 200;
+  int r, c;
+  r = 1;
+  c = 2;
+  MyFunc(ptr, r, c, val);
+  r = 0;
+  c = 8;
+  MyFunc(ptr, r, c, val);
+}
+
+

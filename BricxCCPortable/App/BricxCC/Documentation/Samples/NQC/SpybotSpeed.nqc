@@ -1,0 +1,37 @@
+#include "spy.nqh"
+
+task main() {
+  int x;
+  
+  SetLED(LED_MODE_BLINK, 0);
+  OnFwd(OUT_A+OUT_B);
+
+  //Progressive acceleration
+  for (x=0; x<8; x++) {
+    SetPower(OUT_A+OUT_B,x);
+    SetLED(LED_MODE_ON, x);
+    Wait(100);
+  }
+  //Progressive deceleration
+  for (x=7; x>=0; x--) {
+    SetPower(OUT_A+OUT_B,x);
+    SetLED(LED_MODE_ON, x);
+    Wait(50);
+  }
+  //shallow turn right
+  SetLED(LED_MODE_ON, 0x18);
+  SetPower(OUT_A,3);
+  SetPower(OUT_B,5);
+  Wait(300);
+
+  //shallow turn left
+  SetLED(LED_MODE_ON, 0x3);
+  SetPower(OUT_A,5);
+  SetPower(OUT_B,3);
+  Wait(300);
+
+  //Stop all
+  SetLED(LED_MODE_ON, 0);
+  Off(OUT_A+OUT_B);
+}
+

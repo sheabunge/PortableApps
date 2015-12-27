@@ -1,0 +1,55 @@
+program FindDemo {
+  #include "Spybot.h"
+  #include "Globals.h"
+  #include "Events.h"
+  var nIndex
+  var nControllers
+  
+  sub foo(x, y, z)
+  {
+    local a
+    a = 5
+    DebugOut(a)
+    DebugOut(x)
+    DebugOut(y)
+    DebugOut(z)
+  }
+  
+  sub DebugOut(x)
+  {
+    local k
+    k = 0
+    k /= x
+    // bits 0-5 on green & red LEDs, green is MSB
+/*
+    led[iDisplay] =  (x & 0x17) | ((x & 8) * 4) | ((x & 32) / 4)
+    led[iYellowWarn] = (x / 64) & 1  // bit 6 on yellow LED
+    led[iVLL] =  (x / 128) & 1  // bit 7 on rear red LED
+*/
+  }
+    main {
+      local f
+      local g
+      local h
+      f = 5
+      g = 10
+      h = 11
+      foo(f, g, h)
+    forever {
+      nControllers = 0
+      nIndex = -1
+/*
+		const cNowhere = 0			//world[nBot,iRange] & target[iRange] values
+		const cAnywhere = 1
+		const cThere = 2
+		const cHere = 3
+*/
+      find world[nIndex,iRange] > cNowhere {
+        if world[nIndex,iShortID] < cPCID { nControllers += 1 }
+      }
+      LED[iDisplay] = nControllers
+    }
+  }
+}
+
+

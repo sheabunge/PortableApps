@@ -1,0 +1,42 @@
+task main()
+{
+  SetPower(OUT_A, 1);
+}
+
+sub shiftweight()
+{
+  int i = 0;
+  i +-= -1;
+  i /= 1;
+  i += 2;
+  i -= 1;
+  i &= 1;
+  i ||= 2;
+  i |= 2;
+  i++;
+
+  i--;
+
+  i = 0x1a;
+  i = 10;
+
+/*
+  if ((weight == legs14) && true)
+  {
+    weight = legs23;
+    SetDirection(mot_shift, shift_23);
+  }
+  else
+  {
+    weight = legs14;
+    SetDirection(mot_shift, shift_14);
+  }
+  
+  On(mot_shift);
+  until(touch_shift == 0);
+  Wait(debounce_time);
+  until(touch_shift == 1);
+  Off(mot_shift);
+*/
+}
+

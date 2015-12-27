@@ -1,0 +1,41 @@
+#define Ballmin 40
+#define Ballmax 70
+
+int lastlevel;
+
+task send()
+{
+  while(true){
+    SendMessage (0);Wait (10);
+  }
+}
+
+task check()
+{
+  lastlevel = SENSOR_2;
+  if (SENSOR_2 >lastlevel+200)
+  {
+    stop send;
+    if ((SENSOR_2 > Ballmin) && (SENSOR_2 < Ballmax))
+    {
+      OnFwd(OUT_A+OUT_C);
+      Wait(150);
+    }
+    if ((SENSOR_2<Ballmin) || (SENSOR_2>Ballmax))
+    {
+      OnRev (OUT_C);
+      Wait (85);
+      OnFwd(OUT_A+OUT_C);
+    }
+    start send;
+  }
+}
+
+task main(){
+  SetSensorType(SENSOR_2, SENSOR_TYPE_LIGHT);
+  SetSensorMode(SENSOR_2, SENSOR_MODE_RAW);
+  OnFwd(OUT_A+OUT_C);
+  start send;
+  start check;
+}
+

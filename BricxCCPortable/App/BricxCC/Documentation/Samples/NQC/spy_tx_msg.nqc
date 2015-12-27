@@ -1,0 +1,74 @@
+/*
+ * This program shows how to send messages from Spybotics to an
+ * RCX or Scout.  Each time the touch sensor is pressed, a new
+ * message will be sent.
+ *
+ * Written by Dave Baum.
+ */
+
+/*
+ * These will probably become part of the standard NQC API
+ */
+#define SerialData(n)   @(0x210000 + (n)) // data for SendSer
+__nolist void SetSerialData(const int n, const int &v)  { Set(SerialData(n), v); }
+__nolist void SendSerial(const int first, const int count) { asm { 0xc2, first, count }; }
+
+
+/*
+ * InitComm() - configure the comm hardware to send RCX-style packets
+ */
+  
+void InitComm()
+{
+	// turn off IR beacon
+	Set(@(0x330001),0);
+
+	// setup RCX preamble
+	SetSerialData(13, 0x55);
+	SetSerialData(14, 0xff);
+	SetSerialData(15, 0);
+
+	// setup message to send
+	SetSerialData(0, 0xf7);
+
+	// configure 
+	SetSerialData(16, 3); // User mode
+	SetSerialData(17, 0); // baud, 0=2400
+	SetSerialData(18, 0); // power level, 0=high power
+	SetSerialData(19, 13); // preamble start
+	SetSerialData(20, 3); // preamble length
+	SetSerialData(21, 4); // packet checksum, 4=RCX style
+	SetSerialData(22, 0xff); // turn on bi-phase
+}
+
+
+/*
+ * SendMessage() - send a 'message' packet containing the specified data
+ */
+
+
+void SendMessage(const int &x)
+{
+	SetSerialData(1, x);
+	SendSerial(0, 2);
+}
+
+
+
+task main()
+{
+	InitComm();
+
+	int msg = 0;
+	while(true) {
+		until(!SENSOR_1);
+		until(SENSOR_1);
+		++msg;
+		SendMessage(msg);
+		PlaySound(SOUND_CLICK);
+	}
+}
+
+
+
+

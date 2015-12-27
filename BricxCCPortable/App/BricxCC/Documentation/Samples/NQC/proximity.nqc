@@ -1,0 +1,37 @@
+/* proximity.nqc
+* simple proximity detection
+* using rear IR led+sensor 
+* w/o extra hardware
+*/
+//#include "include/spy.nqh"
+#define EYE   SENSOR_2
+#define       PROXIMITY_ALERT 50
+int proximity;
+
+task main()
+{
+  proximity=1;
+  start proximity_det;
+  while(true)
+  { ; }
+}
+
+task proximity_det()
+{
+    int dark;
+    while (true)
+    {
+      Off(OUT_C);
+      dark=SensorValueRaw(EYE);
+      On(OUT_C);
+      //smooth: pr = (old_pr + new_pr)/2
+      proximity=(proximity+SensorValueRaw(EYE)-dark)/2;
+      Off(OUT_C);
+      if (proximity>PROXIMITY_ALERT)
+      {
+      	PlaySound(SOUND_LOW_BEEP);
+      }
+    }
+}
+
+

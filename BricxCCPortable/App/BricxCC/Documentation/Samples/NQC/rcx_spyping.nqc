@@ -1,0 +1,14 @@
+#pragma noinit
+
+task main()
+{
+		InitSpybotComm();
+		SetSpybotPing(1, ID_BOT_MIN+3, 0x1b);
+		while (true)
+		{
+      Wait(50);
+	    SendSpybotPingMsg();
+		}
+}
+
+

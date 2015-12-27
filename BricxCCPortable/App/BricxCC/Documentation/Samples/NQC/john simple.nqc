@@ -1,0 +1,15 @@
+#pragma noinit
+#pragma reserve 0 1 2
+task main()
+{
+  int x = 5;
+  int * y = &x;
+  int a[5];
+  a[1] = 3;
+  y++;
+  x++;
+//  *y++;
+//  a++;
+//  a[x]++;
+}
+

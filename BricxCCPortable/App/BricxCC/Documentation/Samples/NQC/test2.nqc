@@ -1,0 +1,19 @@
+task main()
+{
+  time1(0) = 30;
+  int z = time1(2);
+  int x= 0;
+  int y = 10;
+  
+  y = OutputStatus(0);
+  
+  OutputStatus(0) = 4;
+  
+  OnFwd(OUT_A);
+  OnFwd(OUT_B);
+  Wait(400);
+  OnRev(OUT_A+OUT_B);
+  Wait(400);
+  Off(OUT_A+OUT_B);
+}
+

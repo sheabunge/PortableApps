@@ -1,0 +1,130 @@
+#SYMBOLS
+Index	Identifier	Type	Flag	Data	Size	RefCount
+0	__D0turnOff	6	1	0	4	6
+1	__D0main	6	1	4	4	3
+2	__signed_stack_001main	6	1	8	4	2
+3	__constVal786433	6	0	12	4	2
+4	__signed_stack_001turnOff	6	1	16	4	2
+5	__IOMWMutex	9	0	20	4	4
+6	__RBtnMutex	9	0	24	4	2
+7	__constVal1	2	0	28	1	1
+8	__zfturnOff	1	1	29	1	4
+9	____initialize_global_data_return	1	1	30	1	3
+10	__constVal39	2	0	31	1	1
+11	__constVal40	2	0	32	1	1
+12	__constVal16	2	0	33	1	1
+13	__SPFArgs	8	0	4	12	5
+14	__SPFArgs.Result	2	1	36	1	5
+15	__SPFArgs.Filename	7	0	38	4	5
+16	__SPFArgs.Filename.Filename_type	1	0	0	1	0
+17	__SPFArgs.Loop	1	1	40	1	5
+18	__SPFArgs.Volume	1	1	41	1	5
+19	__RBtnArgs	8	0	5	8	4
+20	__RBtnArgs.Result	2	1	44	1	4
+21	__RBtnArgs.Index	1	1	45	1	4
+22	__RBtnArgs.Pressed	1	1	46	1	4
+23	__RBtnArgs.Count	1	1	47	1	4
+24	__RBtnArgs.Reset	1	1	48	1	4
+25	__IOMWBIArgs	8	0	4	16	8
+26	__IOMWBIArgs.Result	2	1	52	1	8
+27	__IOMWBIArgs.ModuleID	5	1	56	4	8
+28	__IOMWBIArgs.Offset	3	1	60	2	8
+29	__IOMWBIArgs.Buffer	7	0	62	4	8
+30	__IOMWBIArgs.Buffer.Buffer_type	1	0	0	1	0
+31	__constStr0009	7	0	64	4	1
+32	__constStr0009.__constStr0009_type	1	1	0	1	0
+33	__IOMWFlattenBuf	7	0	66	4	4
+34	__IOMWFlattenBuf.__IOMWFlattenBuf_type	1	0	0	1	0
+35	__strbufmain	7	0	68	4	2
+36	__strbufmain.__strbufmain_type	1	0	0	1	0
+#SOURCES
+Clump	Line	PC	Source
+0	11	0	#line 11 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	12	0		subcall __initialize_global_data, ____initialize_global_data_return
+0	11	2	#line 11 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	11	2	#line 11 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	12	2	#pragma macro 8
+0	12	2		acquire __IOMWMutex
+0	12	3		mov __IOMWBIArgs.ModuleID, __constVal786433
+0	12	5		mov __IOMWBIArgs.Offset, __constVal40
+0	12	7		flatten __IOMWFlattenBuf, __constVal16
+0	12	10		strtoarr __IOMWBIArgs.Buffer, __IOMWFlattenBuf
+0	12	13		syscall 79, __IOMWBIArgs
+0	12	16		release __IOMWMutex
+0	5836	17	#line 5836 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	11	17	#line 11 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	11	17	#line 11 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	13	17	#line 13 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	13	17	#line 13 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	13	17	#line 13 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	14	17		strcat __strbufmain, __constStr0009
+0	13	21	#line 13 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	14	21		set __signed_stack_001main, 4
+0	13	24	#line 13 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	13	24	#line 13 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	14	24		set __D0main, 0
+0	14	27	#line 14 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	14	27	#line 14 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	15	27		mov __SPFArgs.Filename, __strbufmain
+0	14	29	#line 14 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	15	29		mov __SPFArgs.Volume, __signed_stack_001main
+0	14	31	#line 14 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	15	31		mov __SPFArgs.Loop, __D0main
+0	14	33	#line 14 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	15	33		syscall 9, __SPFArgs
+0	14	36	#line 14 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	15	36		mov __D0main, __SPFArgs.Result
+0	14	38	#line 14 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	14	38	#line 14 "C:\Program Files\BricxCC\Untitled1.nxc"
+0	15	38		exit 0, 0
+1	3	0	#line 3 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	4	0		set __D0turnOff, 1
+1	4	3	#line 4 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	5	3		tst 5, __zfturnOff, __D0turnOff
+1	4	6	#line 4 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	5	6		brtst 4, __NXC_Label_605, __zfturnOff
+1	4	9	#line 4 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	5	9		set __signed_stack_001turnOff, 0
+1	4	12	#line 4 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	4	12	#line 4 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	5	12		set __D0turnOff, 0
+1	5	15	#line 5 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	6	15		acquire __RBtnMutex
+1	5	16	#line 5 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	6	16		mov __RBtnArgs.Index, __signed_stack_001turnOff
+1	5	18	#line 5 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	6	18		mov __RBtnArgs.Reset, __D0turnOff
+1	5	20	#line 5 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	6	20		syscall 20, __RBtnArgs
+1	5	23	#line 5 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	6	23		mov __D0turnOff, __RBtnArgs.Pressed
+1	5	25	#line 5 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	6	25		release __RBtnMutex
+1	5	26	#line 5 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	6	26		tst 5, __zfturnOff, __D0turnOff
+1	5	29	#line 5 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	6	29		brtst 4, __NXC_Label_614, __zfturnOff
+1	5	32	#line 5 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	6	32	#pragma macro 8
+1	6	32		acquire __IOMWMutex
+1	6	33		mov __IOMWBIArgs.ModuleID, __constVal786433
+1	6	35		mov __IOMWBIArgs.Offset, __constVal39
+1	6	37		flatten __IOMWFlattenBuf, __constVal1
+1	6	40		strtoarr __IOMWBIArgs.Buffer, __IOMWFlattenBuf
+1	6	43		syscall 79, __IOMWBIArgs
+1	6	46		release __IOMWMutex
+1	5819	47	#line 5819 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	5	47	#line 5 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	5	47	#line 5 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	5	47	#line 5 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	10	47	#line 10 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	11	47		jmp __NXC_Label_604
+1	10	49	#line 10 "C:\Program Files\BricxCC\Untitled1.nxc"
+1	11	49		exit -1, -1
+2	17	0	#line 17 "C:\Program Files\BricxCC\Untitled1.nxc"
+2	18	0		subret ____initialize_global_data_return
+#CLUMPS
+Clump	Name	Offset	File
+0	main	0	C:\Program Files\BricxCC\Untitled1.nxc
+1	turnOff	41	C:\Program Files\BricxCC\Untitled1.nxc
+2	__initialize_global_data	93	C:\Program Files\BricxCC\Untitled1.nxc

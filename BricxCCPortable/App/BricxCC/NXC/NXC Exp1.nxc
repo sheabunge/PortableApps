@@ -1,0 +1,32 @@
+/*   HiTechnic Experimenter's Kit for the SuperPro
+
+Experiment - 1 Introduction
+Read the status of a switch and display the status on an LED
+
+*/
+
+#define SUPERPRO_PORT IN_1
+
+task main()
+{
+  int value;
+
+  SetSensorLowspeed(SUPERPRO_PORT); // set sensor port 1 to low speed serial (I2C)
+  Wait(100);
+  
+  // Set B0 for output
+  SetSensorHTSuperProDigitalControl(SUPERPRO_PORT, DIGI_PIN0);
+
+  while (true) {
+    value = SensorHTSuperProAnalog(SUPERPRO_PORT, HTSPRO_A0);
+    TextOut(0, LCD_LINE1, "A0:     ");
+    NumOut(3*6, LCD_LINE1, value);
+    if (value<512) {
+      SetSensorHTSuperProDigital(SUPERPRO_PORT, 0);
+    } else {
+      SetSensorHTSuperProDigital(SUPERPRO_PORT, DIGI_PIN0);
+    }
+    Wait(50);
+  }
+}
+

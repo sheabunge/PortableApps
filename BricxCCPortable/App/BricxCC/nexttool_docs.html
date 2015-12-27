@@ -1,0 +1,62 @@
+<html>
+<head>
+<TITLE>NeXTTool Documentation</TITLE>
+</head>
+<body background="jchback.jpg">
+<FONT size=+4>NeXTTool Documentation</FONT> 
+<P><IMG src="lookrul2.gif"></P>
+
+<pre>
+NeXTTool - USB & Bluetooth NXT communication utility
+
+C:\winapps\projects\BricxCC>nexttool -help
+NeXTTool version 1.0 (1.0.3.5, built May 11 2006 17:54:00)
+     Copyright (c) 2006 John Hansen
+Usage: NeXTTool [options] [actions]
+Options:
+   /COM=port: specify port name (COMn, usb, resource string, or alias)
+   /BT[=name]: use bluetooth (selects the first brick found or the named brick)
+   /HEX: use hexidecimal for numeric output
+   /Duration=&lt;n&gt;: specify the tone duration for the playtone action
+   /Inbox=&lt;n&gt;: use inbox number n when sending or reading a message
+   /Loop: loop when playing sound files
+   /Relative: reset output position relative
+   /Empty: empty mailbox when reading
+Actions:
+   -listbricks : list resource names of all found NXT bricks
+   -clear : erase all items on the brick
+   -battery : return the battery level
+   -input=&lt;N&gt; : read input N (0-2, 0-3 for NXT)
+   -output=&lt;N&gt; : read the status of output N (0-2)
+   -mute : stop playing sounds
+   -playtone=&lt;frequency&gt; : play a tone for the specified duration
+   -run=&lt;filename&gt; : run the specified program
+   -runningprogram : return the name of the currently running program
+   -stop : stop the currently running program
+   -playfile=&lt;filename&gt; : play the specified sound file
+   -firmware=&lt;filename&gt; : download firmware
+   -download=&lt;filename&gt; : download the specified file to the NXT
+   -upload=&lt;filename&gt; : upload the specified file from the NXT
+   -listfiles[=&lt;pattern&gt;] : list the files matching the pattern (or *.*)
+   -listmodules[=&lt;pattern&gt;] : list the modules matching the pattern (or *.*)
+   -delete=&lt;filename&gt; : delete the specified file from the NXT
+   -keepalive : return the current sleep time limit
+   -msg=&lt;string&gt; : send the specified message to the NXT
+   -msgread=&lt;box&gt; : read the message from the specified box
+   -resetoutputposition=&lt;port&gt; : reset the position for the specified port
+   -resetinputsv=&lt;port&gt; : reset the input scaled value for the specified port
+   -setname=&lt;new_name&gt; : set the name of the NXT
+   -getname : return the name of the NXT
+   -versions : return the NXT firmware and protocol versions
+   -deviceinfo : return all NXT device information
+   -freemem : return the amount of free memory
+   -lsstatus=&lt;port&gt; : return the low speed status for the specified port
+   -btnstate=&lt;btn&gt; : return the button state for the specified button
+   -resetbtnstate=&lt;btn&gt; : reset the button state for the specified button
+   -boot : reset the NXT into SAMBA mode (usb only)
+   -btreset : reset the NXT bluetooth to factory settings (usb only)
+General:
+   -help : display command line options
+</pre>
+</body>
+</html>

@@ -1,0 +1,241 @@
+; comment -> G:\nxt\BricxCC\Documentation\Samples\LASM\7_music.asm
+; comment Success: Task   0 assembled
+; comment <-
+dseg segment
+
+  motor_pwr_0 sbyte
+  motor_pwr_1 sbyte
+  motor_pwr_2 sbyte
+
+  motor_dir_0 sbyte 1
+  motor_dir_1 sbyte 1
+  motor_dir_2 sbyte 1
+
+  motor_on_0  byte
+  motor_on_1  byte
+  motor_on_2  byte
+
+dseg ends
+
+dseg segment
+
+  timer_offset_0 sdword
+  timer_offset_1 sdword
+  timer_offset_2 sdword
+  timer_offset_3 sdword
+
+  timer_tick_0   sdword
+  timer_tick_1   sdword
+  timer_tick_2   sdword
+  timer_tick_3   sdword
+
+  timer_mutex_0  mutex
+  timer_mutex_1  mutex
+  timer_mutex_2  mutex
+  timer_mutex_3  mutex
+
+dseg ends
+dseg segment
+  vars   sword[]
+  m_vars mutex
+dseg ends
+
+dseg segment
+  volumeCtrl byte 3
+  volumeCtrlMute byte 0
+dseg ends
+
+dseg segment
+  task0_temp1 sword
+  task0_temp2 sword
+  task0_run   byte
+  running_tasks byte
+dseg ends
+
+; --------------------------------------
+thread main
+  precedes task0
+  gettick timer_offset_0
+  mov     timer_offset_1, timer_offset_0
+  mov     timer_offset_2, timer_offset_0
+  mov     timer_offset_3, timer_offset_0
+  arrinit vars, 0, 128
+  set task0_run, 1
+  set running_tasks, 1
+  exit
+endt
+
+; ----------------------------
+thread task0
+lbl_task0_start:
+  brtst EQ, lbl_task0_stop, running_tasks
+  brtst EQ, lbl_task0_start, task0_run
+
+; pwr
+  brtst EQ, lbl_task0_start, task0_run
+  set motor_pwr_0, 7
+  mul motor_pwr_0, motor_pwr_0, 14 ; scale 0-7 to 0-100
+  mul motor_pwr_0, motor_pwr_0, motor_dir_0 ; adjust direction
+  brtst EQ, lblNotOn0, motor_on_0
+  setout 0, Power,       motor_pwr_0, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn0:
+  set motor_pwr_1, 7
+  mul motor_pwr_1, motor_pwr_1, 14 ; scale 0-7 to 0-100
+  mul motor_pwr_1, motor_pwr_1, motor_dir_1 ; adjust direction
+  brtst EQ, lblNotOn1, motor_on_1
+  setout 1, Power,       motor_pwr_1, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn1:
+  set motor_pwr_2, 7
+  mul motor_pwr_2, motor_pwr_2, 14 ; scale 0-7 to 0-100
+  mul motor_pwr_2, motor_pwr_2, motor_dir_2 ; adjust direction
+  brtst EQ, lblNotOn2, motor_on_2
+  setout 2, Power,       motor_pwr_2, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn2:
+
+; dir
+  brtst EQ, lbl_task0_start, task0_run
+  set motor_dir_0, 1
+  mul motor_pwr_0, motor_pwr_0, motor_dir_0 ; adjust direction
+  brtst EQ, lblNotOn3, motor_on_0
+  setout 0, Power,       motor_pwr_0, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn3:
+  set motor_dir_1, 1
+  mul motor_pwr_1, motor_pwr_1, motor_dir_1 ; adjust direction
+  brtst EQ, lblNotOn4, motor_on_1
+  setout 1, Power,       motor_pwr_1, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn4:
+  set motor_dir_2, 1
+  mul motor_pwr_2, motor_pwr_2, motor_dir_2 ; adjust direction
+  brtst EQ, lblNotOn5, motor_on_2
+  setout 2, Power,       motor_pwr_2, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn5:
+
+; playt
+  brtst EQ, lbl_task0_start, task0_run
+dseg segment
+  TSoundPlayTone struct
+    Result sbyte
+    Frequency word
+    Duration word
+    Loop byte
+    Volume byte
+  TSoundPlayTone ends
+dseg ends
+dseg segment
+  soundplaytone0 TSoundPlayTone
+dseg ends
+  set soundplaytone0.Frequency, 262
+  set soundplaytone0.Duration, 400
+  set soundplaytone0.Loop, 0
+  mov soundplaytone0.Volume, volumeCtrl
+  syscall SoundPlayTone, soundplaytone0
+
+; wait
+  brtst EQ, lbl_task0_start, task0_run
+  set task0_temp1, 50
+dseg segment
+  now6 dword
+  then6 dword
+dseg ends
+  gettick now6
+  mul task0_temp1, task0_temp1, 10
+  add then6, now6, task0_temp1
+lblWaiting6:
+  gettick now6
+  brcmp LT, lblWaiting6, now6, then6
+
+; playt
+  brtst EQ, lbl_task0_start, task0_run
+  set soundplaytone0.Frequency, 294
+  set soundplaytone0.Duration, 400
+  set soundplaytone0.Loop, 0
+  mov soundplaytone0.Volume, volumeCtrl
+  syscall SoundPlayTone, soundplaytone0
+
+; wait
+  brtst EQ, lbl_task0_start, task0_run
+  set task0_temp1, 50
+dseg segment
+  now7 dword
+  then7 dword
+dseg ends
+  gettick now7
+  mul task0_temp1, task0_temp1, 10
+  add then7, now7, task0_temp1
+lblWaiting7:
+  gettick now7
+  brcmp LT, lblWaiting7, now7, then7
+
+; playt
+  brtst EQ, lbl_task0_start, task0_run
+  set soundplaytone0.Frequency, 330
+  set soundplaytone0.Duration, 400
+  set soundplaytone0.Loop, 0
+  mov soundplaytone0.Volume, volumeCtrl
+  syscall SoundPlayTone, soundplaytone0
+
+; wait
+  brtst EQ, lbl_task0_start, task0_run
+  set task0_temp1, 50
+dseg segment
+  now8 dword
+  then8 dword
+dseg ends
+  gettick now8
+  mul task0_temp1, task0_temp1, 10
+  add then8, now8, task0_temp1
+lblWaiting8:
+  gettick now8
+  brcmp LT, lblWaiting8, now8, then8
+
+; playt
+  brtst EQ, lbl_task0_start, task0_run
+  set soundplaytone0.Frequency, 294
+  set soundplaytone0.Duration, 400
+  set soundplaytone0.Loop, 0
+  mov soundplaytone0.Volume, volumeCtrl
+  syscall SoundPlayTone, soundplaytone0
+
+; wait
+  brtst EQ, lbl_task0_start, task0_run
+  set task0_temp1, 50
+dseg segment
+  now9 dword
+  then9 dword
+dseg ends
+  gettick now9
+  mul task0_temp1, task0_temp1, 10
+  add then9, now9, task0_temp1
+lblWaiting9:
+  gettick now9
+  brcmp LT, lblWaiting9, now9, then9
+
+; playt
+  brtst EQ, lbl_task0_start, task0_run
+  set soundplaytone0.Frequency, 262
+  set soundplaytone0.Duration, 1600
+  set soundplaytone0.Loop, 0
+  mov soundplaytone0.Volume, volumeCtrl
+  syscall SoundPlayTone, soundplaytone0
+
+; wait
+  brtst EQ, lbl_task0_start, task0_run
+  set task0_temp1, 200
+dseg segment
+  now10 dword
+  then10 dword
+dseg ends
+  gettick now10
+  mul task0_temp1, task0_temp1, 10
+  add then10, now10, task0_temp1
+lblWaiting10:
+  gettick now10
+  brcmp LT, lblWaiting10, now10, then10
+
+  set task0_run, 0 ; stop yourself
+  sub running_tasks, running_tasks, 1
+  jmp lbl_task0_start
+lbl_task0_stop:
+  exit
+endt ; Task (0)
+

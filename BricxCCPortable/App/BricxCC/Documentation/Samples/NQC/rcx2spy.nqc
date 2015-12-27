@@ -1,0 +1,42 @@
+#pragma noinit
+task main()
+{
+/*
+    InitRCComm();
+    SetRCMessage(RC_CHANNEL_2, RC_CMD_FWD, RC_CMD_FWD);
+    repeat(2)
+    {
+        SendRCMsg();
+        Wait(400);
+    }
+    Wait(200);
+*/
+    InitSpybotComm(); // switch to Spybot communication
+    SetSpybotMessage(MSG_BROADCAST, ID_BOT_MIN+1, 0, CMD_FIRE_LASER, 1, 100);
+    repeat(2)
+    {
+        SendSpybotMsg();
+        Wait(300);
+    }
+
+    Wait(100);
+    SendSpybotCtrlMessage(0, SPY_CTRL_BTN_1);
+    Wait(100);
+    SendSpybotCtrlMessage(0, SPY_CTRL_BTN_2);
+    Wait(100);
+    SendSpybotCtrlMessage(0, SPY_CTRL_BTN_3);
+    Wait(100);
+    SendSpybotCtrlMessage(0, SPY_CTRL_BTN_4);
+    Wait(100);
+    SendSpybotCtrlMessage(0, SPY_CTRL_BTN_5);
+    Wait(100);
+    SendSpybotMessage(MSG_BROADCAST, ID_BOT_MIN+1, 0, 0x40, 2, 0);
+/*
+    SetSpybotCtrlPingMessage(ID_BOT_MIN+1);
+    repeat(2)
+    {
+        SendSpybotCtrlPingMsg();
+        Wait(400);
+    }
+*/
+}

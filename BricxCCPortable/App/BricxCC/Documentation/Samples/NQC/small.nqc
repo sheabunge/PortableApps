@@ -1,0 +1,21 @@
+task main()
+{
+  int a = Random(4);
+  switch(a)
+  {
+    case 0:
+      OnRev(OUT_A);
+      break;
+    case 1:
+      OnFwd(OUT_A);
+    case 2:
+      OnFwd(OUT_B);
+      break;
+    case 3:
+      OnFwd(OUT_C);
+      break;
+    default:
+      OnFwd(OUT_A+OUT_B);
+      break;
+  }
+}

@@ -1,0 +1,41 @@
+__nolist void NOP1() { Wait(0); }
+__nolist void NOP2() { asm { 0x10 }; }
+__nolist void NOP3() { asm { 0xe0 }; }
+__nolist void NOP4() { Wait(-1); }
+__nolist void NOP5() { asm { 0x27, 1 }; }
+
+int i, j, k, l, m, n, x1, x2;
+
+task main()
+{
+  CreateDatalog(50);
+  repeat (10)
+  {
+    x1 = FastTimer(0);
+    repeat (100) { NOP1(); }
+    x2 = FastTimer(0);
+    j = x2 - x1;
+    AddToDatalog(j);
+    x1 = FastTimer(0);
+    repeat (100) { NOP2(); }
+    x2 = FastTimer(0);
+    k = x2 - x1;
+    AddToDatalog(k);
+    x1 = FastTimer(0);
+    repeat (100) { NOP3(); }
+    x2 = FastTimer(0);
+    l = x2 - x1;
+    AddToDatalog(l);
+    x1 = FastTimer(0);
+    repeat (100) { NOP4(); }
+    x2 = FastTimer(0);
+    m = x2 - x1;
+    AddToDatalog(m);
+    x1 = FastTimer(0);
+    repeat (100) { NOP5(); }
+    x2 = FastTimer(0);
+    n = x2 - x1;
+    AddToDatalog(n);
+    Wait(4);
+  }
+}

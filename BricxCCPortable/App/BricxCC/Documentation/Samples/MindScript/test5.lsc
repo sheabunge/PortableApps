@@ -1,0 +1,39 @@
+program test5 {
+  #include "Spybot.h"
+  var m
+  var t
+  const MAX_TARGET = 5
+
+  main {
+    t = 5 + 0x80
+    m = 50
+    eeprom[t] = m
+//  set 54,30,0,31
+    eeprom[0x85] = m
+//  set 20,133,0,31
+
+/*
+    while t < MAX_TARGET
+    {
+      target = t
+      target[iNote] = m
+       m = target[iShortID]
+       m = target[iLinkID]
+       m = target[iRange]
+       m = target[iDirection]
+       m = target[iAspect]
+       m = target[iInfo]
+       m = target[iNote]
+       m = world[t,iShortID]
+       m = world[t,iLinkID]
+       m = world[t,iRange]
+       m = world[t,iDirection]
+       m = world[t,iAspect]
+       m = world[t,iNote]
+       t += 1
+    }
+*/
+  }
+}
+
+

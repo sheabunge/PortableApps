@@ -1,0 +1,64 @@
+#if defined(__SPY)
+
+#ifndef __SPY_INTERACTION
+#define __SPY_INTERACTION
+
+#ifndef nControllerButton
+  #pragma reserve 17
+  #define nControllerButton (@17)
+#endif
+#ifndef nMessageValue
+  #pragma reserve 18
+  #define nMessageValue (@18)
+#endif
+#ifndef nMessage
+  #pragma reserve 19
+  #define nMessage (@19)
+#endif
+#ifndef nMessageSemaphore
+  #pragma reserve 20
+  #define nMessageSemaphore (@20)
+#endif
+#ifndef nStatus
+  #pragma reserve 23
+  #define nStatus (@23)
+#endif
+#ifndef nEvents
+  #pragma reserve 22
+  #define nEvents (@22)
+  #define EVENT_MAINTASKBEAD 0x0001
+  #define EVENT_BUMPTASKBEAD 0x0002
+  #define EVENT_STATETASKBEAD 0x0004
+  #define EVENT_CONTROLLERTASKBEAD 0x0008
+  #define EVENT_TICK 0x0010
+  #define EVENT_WORLD 0x0020
+  #define EVENT_TARGET 0x0040
+  #define EVENT_POST 0x0080
+  #define EVENT_LOCKTARGET 0x0100
+  #define EVENT_RUNBEADS 0x0200
+  #define EVENT_EXTSTATEVALUE 0x0400
+  #define EVENT_EVENTSOUNDS 0x0800
+  #define EVENT_BUMP 0x1000
+  #define EVENT_BLINK 0x2000
+  #define EVENT_DISPLAYACTION 0x4000
+  #define EVENT_SUSPENDSTATEBEADS 0x8000
+  #define WORLD_EVENTS_MASK 0x0060
+  #define MAX_STOP_STATEBEAD_RETRIES 500
+#endif
+
+#define MAX_MESSAGE_SEMAPHORE_RETRIES 20
+#define MESSAGE_COMMAND_MASK 0x00ff
+#define MESSAGE_INDEX 0x0100
+
+__nolist void ProcessPostEvent() { asm { 0x17, 32 }; }
+__nolist void ResetMessages() { asm { 0x17, 33 }; }
+__nolist void ProcessVLLEvent() { asm { 0x17, 36 }; }
+__nolist void ProcessBlinkEvent() { asm { 0x17, 39 }; }
+
+// other interaction routines are included in the built-in Spybot API.
+//  __nolist void SendSpybotMessage(const int &nIndex, const int &nCmd, const int &nHiByte, const int &nLoByte)
+//  __nolist void SendRCXMessage(const int &nMessage)
+//  __nolist void SendAllRangeMessage(const int &nMessage, const int &nData)
+#endif
+
+#endif

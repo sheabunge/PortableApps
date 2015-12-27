@@ -1,0 +1,40 @@
+#pragma noinit
+int a, b;
+task main ()
+{
+   a=5;
+   b = a*2 + a*3;
+   a = a*2 + a*3 + a*4 + a*5;
+}
+
+/*
+   a=5;
+000 setv     var[0], 5
+   b = a*2 + a*3;
+005 setv     var[1], var[0]
+010 mulv     var[1], 2
+015 setv     var[47], var[0]
+020 mulv     var[47], 3
+025 sumv     var[1], var[47]
+   a = a*2 + a*3;
+030 setv     var[47], var[0]
+035 mulv     var[47], 2
+040 setv     var[47], var[0]
+045 mulv     var[47], 3
+050 sumv     var[47], var[47] ***** bug *****
+055 setv     var[0], var[47]
+   a = a*2 + a*3 + a*4 + a*5;
+030 setv     var[47], var[0]
+035 mulv     var[47], 2
+040 setv     var[47], var[0]
+045 mulv     var[47], 3
+050 sumv     var[47], var[47] ***** bug *****
+055 setv     var[47], var[0]
+060 mulv     var[47], 4
+065 sumv     var[47], var[47] ***** bug *****
+070 setv     var[47], var[0]
+075 mulv     var[47], 5
+080 sumv     var[47], var[47] ***** bug *****
+085 setv     var[0], var[47]
+*/
+

@@ -1,0 +1,23 @@
+#pragma noinit
+__nolist void SetEEPROM2(const int &i, const int &d)
+{
+  if (__type(i)==2)
+    asm { 0x05, 0x14, $i : 0x3000004, $d };
+  else
+    asm { 0x05, 0x36, $i : 0x3000001, $d };
+}
+
+task main()
+{
+//000 set        EEPROM(0), var[1282]  05 14 00 00 02 05
+//006 ?                                00
+//007 setv       var[35], 3            14 23 02 03 00
+//012 set        IndirectEEPROM(35), TimerControl(0) 05 36 23 13 00 00
+//018 set        EEPROM(3), var[19]    05 14 03 00 13 00
+//024 ?                                00
+  SetEEPROM2(0x81, 5); // set EEPROM location 0 to 5
+  int i = 3;
+  SetEEPROM(i, TimerState(0)); // set EEPROM location 3  int x = 40;
+  SetEEPROM2(3, TimerState(0)); // set EEPROM location 3  int x = 40;
+}
+

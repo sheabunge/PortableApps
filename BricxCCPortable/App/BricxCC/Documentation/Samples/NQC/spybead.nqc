@@ -1,0 +1,252 @@
+#if defined(__SPY)
+
+// Queues a request for the engine to chance the game state
+// defines for nNewState
+#define GameOverState -1
+#define OutOfGameState -2
+#define StartState 0
+
+__nolist void Goto_Bead (const int nNewState)
+{
+  asm { 0xe3, &nNewState};
+  asm { 0x17, 65 };
+  asm { 0x01, 1 };
+}
+
+// Basic movement like sub 43 Basic_Move
+// time is in 10ms steps
+__nolist void BasicMovement_Bead (const int nMovement, const int nTime)
+{
+  asm { 0xe3, &nMovement};
+  asm { 0xe3, &nTime};
+  asm { 0x17, 87 };
+  asm { 0x01, 2 };
+}
+
+
+//Set Bot property parameters
+//Like Game
+Mode,Speed,TargetType,TargetTypeID,TargetTypeNote,EnableStatus,DisAbleStatus
+//SuspendStateBeads,ResuseStateBeads,DisplayMode,RCDisable,RCChannel,TargetNote
+//defines nProperty parameters
+#define setGameMode 0
+#define setSpeed 1
+#define setVisibility 2
+#define setTargetType 3
+#define setTargetTypeID 4
+#define setTargetTeamTypeID 5
+#define setTargetTypeNote 6
+#define setEnableStatus 7
+#define setDisableStatus 8
+#define setSuspendStateBeads 9
+#define setResumeStateBeads 10
+#define setDisplayMode 11
+#define setRCDisable 12
+#define setRCChannel 13
+#define setTargetNote 14
+
+//defines nValue parameters
+#define SlowSpeed 1
+#define NormalSpeed 2
+#define FastSpeed 3
+#define StealthVisibility 0
+#define LowVisibility 1
+#define NormalVisibility 2
+#define HighVisibility 3
+#define StateTarget -1
+#define Nothing 0
+#define Anything 1
+#define AnyController 2
+#define AnyBot 3
+#define MyController 4
+#define NotMyController 5
+__nolist void Set_Bead(const int nProperty, const int nVal)
+{
+  asm { 0xe3, &nProperty } ;
+  asm { 0xe3, &nVal } ;
+  asm { 0x17, 88 };
+  asm { 0x01, 2 };
+}
+
+
+//Play a tone for 100mSec
+
+__nolist void PlayTone_Bead(const int nTone)
+{
+  asm { 0xe3, &nTone } ;
+  asm { 0x17, 93 };
+  asm { 0x01, 1 };
+}
+
+// Play's a sound in 10mSec time steps
+// Defines for nSound
+//sound effects (0 to 79)-1 no sound
+#define nSoundNone   -1
+#define nSoundKeyPressSound   0
+#define nSoundPowerOn   1
+#define nSoundSweepDown   2
+#define nSoundSweepUp   3
+#define nSoundBuh   4
+#define nSoundHurrah   5
+#define nSoundShocked   6
+#define nSoundFireLaser           7
+#define nSoundFireElectroNet   8
+#define nSoundFireSpinner   9
+#define nSoundHitByLaser   10
+#define nSoundHitByElectroNet           11
+#define nSoundHitBySpinner   12
+#define nSoundTag   13
+#define nSoundCrash   14
+#define nSoundFight   15
+#define nSoundGotIt   16
+#define nSoundGeneralAlert   17
+#define nSoundOutOfEnergyAlert           18
+#define nSoundLowEnergyAlert   19
+#define nSoundScoreAlert   20
+#define nSoundTimeAlert           21
+#define nSoundProximityAlert   22
+#define nSoundDangerAlert   23
+#define nSoundBombAlert           24
+#define nSoundFinalCountdown   25
+#define nSoundTickTock   26
+#define nSoundGoto   27
+#define nSoundScan   28
+#define nSoundPointTo   29
+#define nSoundActivateShields           30 //0.75 seconds
+#define nSoundActivateReflect           31 //0.79 seconds
+#define nSoundActivateCloak   32 //1.81 seconds
+#define nSoundActivateFlashBlind   33 //0.95 seconds
+#define nSoundMagnet   34 //5.88 seconds
+#define nSoundQuadDamage   35 //2.26 seconds
+#define nSoundRepulse   36 //5.2 seconds
+#define nSoundTurbo   37 //2.4 seconds
+#define nSoundFreeze   38 //4.8 seconds
+#define nSoundSlow   39 //2.9 seconds
+#define nSoundReverse   40 //4.9 seconds
+#define nSoundDizzy   41 //5.4 seconds
+#define nSoundBoost   42 //2.28 seconds
+#define nSoundDeactivateShields           43 //1.05 seconds
+#define nSoundDeactivateReflect           44 //0.3 seconds
+#define nSoundDeactivateCloak           45 //1.1 seconds
+#define nSoundReflect   46
+#define nSoundExplosion           47
+#define nSoundBigExplosion   48
+#define nSoundPlaceBomb           49
+#define nSoundHitByWind           50
+#define nSoundOuch   51
+#define nSoundGeiger   52
+#define nSoundWhistle   53
+#define nSoundImIt   54
+#define nSoundHelp   55
+#define nSoundSiren   56
+#define nSoundBurnt   57
+#define nSoundGrinded   58
+#define nSoundSmacked   59
+#define nSoundTrillUp   60
+#define nSoundTrillDown           61
+#define nSoundYell   62
+#define nSoundWhisper   63
+
+//sounds in e2prom
+#define nSoundSpeciesStart   64
+#define nSoundWin   65
+#define nSoundLose   66
+#define nSoundOutOfGame           67
+#define nSoundMissionStart   68
+#define nSoundMission1   69
+#define nSoundMission2   70
+#define nSoundMission3   71
+#define nSoundMission4   72
+#define nSoundMission5   73
+#define nSoundUser1   74
+#define nSoundUser2   75
+#define nSoundUser3   76
+#define nSoundUser4   77
+#define nSoundUser5   78
+#define nSoundUser6   79
+__nolist void PlaySound_Bead(const int nSound, const int nTime)
+{
+  asm { 0xe3, &nSound };
+  asm { 0xe3, &nTime };
+  asm { 0x17, 94 };
+  asm { 0x01, 2 };
+}
+
+// Defines for WichLed(s)
+
+#define nLedRed1 0x01
+#define nLedRed2 0x02
+#define nLedRed3 0x04
+#define nLedGreen1 0x08
+#define nLedGreen2 0x10
+#define nLedGreen3 0x20
+#define nLedYellow 0x40
+#define nLedRedGreenLEDs
+nLedRed1+nLedRed2+nLedRed3+nLedGreen1+nLedGreen2+nLedGreen3
+
+
+__nolist void LED_Bead(const int nLED,const int nBlink,const int
+nInterval,const int nTime)
+{
+  asm { 0xe3, &nLED } ;
+  asm { 0xe3, &nBlink } ;
+  asm { 0xe3, &nInterval } ;
+  asm { 0xe3, &nTime } ;
+  asm { 0x17, 95 };
+  asm { 0x01, 4 };
+}
+
+// Defines for What to display
+
+#define nDisplayState 1
+#define nDisplayRandom 2
+#define nDisplayNothing 3
+#define nDisplayVars 0x10
+#define nDisplayOneVar nDisplayVars + 1
+#define nDisplayTwoVar nDisplayVars + 2
+#define nDisplayGameTimeRemaining nDisplayVars + 3
+#define nDisplayTarget 0x20
+#define nDisplayRadar nDisplayTarget + 1
+#define nDisplayProximity nDisplayTarget + 2
+#define nDisplayAnimation 0x30  //uses 0x30 to 0x3f
+__nolist void Display_Bead(const int nDisplay,const int nTime)
+{
+  asm { 0xe3, &nDisplay } ;
+  asm { 0xe3, &nTime } ;
+  asm { 0x17, 96 };
+  asm { 0x01, 2 };
+}
+
+// Defines direction Led count
+#define nDirDown 0
+#define nDirUp 1
+
+__nolist void CountDown_Bead(const int nCount,const int nDir,const int nStep)
+{
+  asm { 0xe3, &nCount } ;
+  asm { 0xe3, &nDir } ;
+  asm { 0xe3, &nStep } ;
+  asm { 0x17, 97 };
+  asm { 0x01, 3 };
+}
+
+// Fancy movement like sub 47 with extra nRepeat
+// time is in 10ms steps
+__nolist void FancyMovement_Bead (const int move, const int nRepeat, const
+int time)
+{
+  asm { 0xe3, &move };
+  asm { 0xe3, &nRepeat };
+  asm { 0xe3, &time };
+  asm { 0x17, 109 };
+  asm { 0x01, 3 };
+}
+// Wait in 10mSec steps
+__nolist void Wait_Bead(const int nTime)
+{
+  asm { 0xe3, &nTime } ;
+  asm { 0x17, 113 };
+  asm { 0x01, 1 };
+}
+
+#endif

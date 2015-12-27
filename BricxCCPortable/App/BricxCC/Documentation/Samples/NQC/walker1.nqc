@@ -1,0 +1,339 @@
+/*  NQC   2.1r1 by Dave Baum
+    RCXCC 3.1 by Mark Overmars
+    This code by J.P. Brown, 2001
+    
+    Code controls a hybrid (part pneumatic, part motor-driven)
+    quadruped with legs 1,2,3 and 4 as follows...
+    
+     1--FRONT--2
+        |   |
+        |   |
+        |   |
+     3--BA CK--4
+     
+     The quad's weight is supported on either legs 1 and 4, *or* on legs 2 and 3.
+     Weight is transferred from one pair to other using 'mot_shift'.
+     The position of the weight shift is monitored by two touch sensors
+     connected to 'touch_shift' 
+       -- the two touch sensors are connected in parallel, one at each end of the 
+          limit of travel of the shifting mechanism.  The two touch sensors are 
+          connected in parallel to a single sensor port so that, if either is 
+          pressed, the result is TRUE.
+     
+     The quad is moved forward/backward by large pneumatic pistons.  Each leg is moved by 
+     one piston. The pistons are connected in pairs to pneumatic valves:  
+       -- the pistons moving the right legs are connected to a valve controlled by 'mot_right';
+       -- the pistons moving the left legs are connected to a valve controlled by 'mot_left'.
+       
+     'mot_left' and 'mot_right' act as valve controls *and* also provide the motive force for
+     the two large pneumatic pumps that provide the air pressure (neat trick with a
+     differential on each motor).  The pumps are coupled to a light-blue air tank, and then 
+     the air tank is coupled to the two valves.
+     
+     Each pair of legs (left-hand pair or right-hand pair) can be in one of 
+     two states -- open or closed.  
+       -- 'open', the feet are as far apart as possible, 
+       -- 'closed': the feet are as near together as possible.
+     
+     There are four different foot patterns possible...
+     
+     -----------------------------------------------------
+     left_closed, right_open  |  left_closed, right_closed
+     -------------------------|---------------------------
+               2              |   
+              /               |
+      / FRONT                 |    / FRONT \
+     1  |   |                 |   1  |   |  2
+        |   |                 |      |   |
+     3  |   |                 |   3  |   |  4
+      \ BA CK                 |    \ BA CK /
+             \                |
+              4               |
+      
+     ---------------------------------------------------
+     left_open, right_open    |  left_open, right_closed
+     -------------------------|-------------------------
+     1         2              |   1
+      \       /               |    \
+        FRONT                 |      FRONT \
+        |   |                 |      |   |  2
+        |   |                 |      |   |
+        |   |                 |      |   |  4
+        BA CK                 |      BA CK /
+      /      \                |    /
+    3         4               |   3
+    
+    These patterns, together with shifting the weight from one set of feet to another
+    (a total of eight different arrangements of the legs), allow the robot to maneuver.
+    
+    The point at which the legs have reached their limit of travel is detected by four touch 
+    sensors (one sensor for each leg).  The sensors for the left-hand side are connected in 
+    parallel (if either of the left legs presses a sensor, the result is TRUE).  The same 
+    arrangement is used for the sensors for the two right-hand legs.  The two sets of sensors 
+    are then wired together in series to produce a TRUE result only if the left AND right side 
+    touch sensor arrays are pressed.
+    
+    There is also a pressure limit switch to turn off the pumping of 'mot_left' and 
+    'mot_right' when sufficient air pressure is available for the legs to move *.  The limit 
+    switch is provide by a small pneumatic cylinder which is connected into the pneumatic 
+    circuit between the air tank and the pneumatic valves.  The piston is forced closed by two 
+    blue rubber bands.  When the air pressure is sufficient to push the piston forwards against 
+    the force of the rubber bands, it presses a touch sensor on 'touch_pressure' indicating that,
+    if the robot is idle (not walking), the pumps can be turned off.
+    
+    [* Normally I prefer not to use air tanks.  However, I have discovered a curious
+       problem with some of the large pneumatic pistons: when the piston arm is fully extended
+       *and* restrained, an air leak can occur when air is supplied to the top input of the 
+       piston. To overcome this the quad uses the air tank to build up a reservoir of compresed
+       air which forces the piston  quickly past the "leak" position, thus minimizing any 
+       losses.]
+    
+*/
+#include "weird.nqh"
+#define mot_shift   OUT_A
+#define mot_left    OUT_B
+#define mot_right   OUT_C
+#define mot_legs    mot_left + mot_right
+#define mot_all     mot_left + mot_right + mot_shift
+
+#define shift_14    OUT_FWD
+#define shift_23    OUT_REV
+#define left_open   OUT_REV
+#define left_close  OUT_FWD 
+#define right_open  OUT_REV
+#define right_close OUT_FWD
+
+#define touch_legs     SENSOR_1  // pressed when left AND right leg sensors are pressed
+#define touch_shift    SENSOR_2  // pressed when weight-shift mechanism as at the limit of travel (from legs14 to legs13, or vice versa)
+#define touch_pressure SENSOR_3  // pressed when the pressure valve inidcates sufficent pressure.
+
+#define legs14  0  // robot is standing on legs 1 and 4
+#define legs23  1  // robot is standing on legs 2 and 3
+
+/* The #defines that follow are the message values that are sent to the RCX to
+   tell it how to walk.  They are based on the RCXCC Send Message applet 
+   -- the numbers in the applet are arranged as follows:
+        7 8 9
+        4 5 6
+        1 2 3 
+   so it makes sense for value '8' to represent forward, value '2' to 
+   represent reverse, and so on...
+   You might want to revise this if you are using (e.g.) the LEGO remote
+   for control.  */
+   
+#define walk_stop      5  // stop
+#define walk_fwd       8  // walk foward (in the direction the IR port is pointing)
+#define walk_rev       2  // walk backward
+#define walk_left      4  // turn to the left
+#define walk_right     6  // turn to the right
+
+// time to wait for 
+#define debounce_time  50 // 0.5 seconds
+
+
+int weight   = 0;        // weight distribution
+int walk = walk_fwd;     // the way to walk
+int old_walk = walk_fwd; // the way that the quad was walking previously
+
+
+/* ---------------------------------------------------- 
+   Shifts weight from legs14 to legs23, or vice versa.
+   'touch_shift' is ressed at the extreme limits of 
+   travel of the shifting mechanism (i.e., when weight is
+   fuly on legs14 or legs23.  However, 'touch_shift'
+   cannot distinguish between legs14 and legs23.
+   ---------------------------------------------------*/
+sub shiftweight()
+  {
+  if(weight == legs14)
+    {
+    weight = legs23;
+    SetDirection(mot_shift, shift_23);
+    }
+  else
+    {
+    weight = legs14;
+    SetDirection(mot_shift, shift_14);
+    }
+  
+  On(mot_shift);
+  until(touch_shift == 0);
+  Wait(debounce_time);
+  until(touch_shift == 1);
+  Off(mot_shift);
+  }
+
+/* -------------------------------------------------------
+   Monitors 'touch_pressure' -- the touch sensor that is 
+   pressed when there is sufficient reserve air pressure
+   for walking.  Switches pumping motors ('mot_left', 
+   'mot_right') off if the robot is stopped *and* there is 
+   enough air pressure, otherwise switches these motors on.
+   -------------------------------------------------------*/
+task pumping()
+  {
+  while(true)
+    {
+    if(touch_pressure == 0)
+      {
+      On(mot_legs);
+      }
+    else
+      {
+      if(walk == walk_stop)
+        {
+        until(touch_pressure == 1 && touch_legs==1);
+        Off(mot_legs);
+        }
+      }
+    }
+  }
+
+
+/* -----------------------------------------------------
+   * Controls the directions of 'mot_left' and 'mot_right' 
+   to set the pneumatic valves in the correct positions.
+   * Monitors the progress of each 'step' until completion.
+   * Shifts the weight to the other set of legs.
+   ------------------------------------------------ */
+task walking()
+  {
+  while(true)
+    {
+    if(walk != walk_stop)
+      {
+      /* set the motor directions assuming that quad is
+         standing on legs14.  (If not -- if the bot is
+         standing on legs23 -- we will reverse the
+         motor directions later). */
+      switch(walk)
+        {
+        case walk_fwd:
+          // close left legs, open right legs
+          SetDirection(mot_left, left_close);
+          SetDirection(mot_right, right_open);
+          break;
+        case walk_rev:
+          // open left legs, close right legs
+          SetDirection(mot_left, left_open);
+          SetDirection(mot_right, right_close);
+          break;
+        case walk_left:
+          // open left and right legs
+          SetDirection(mot_left, left_open);
+          SetDirection(mot_right, right_open);
+          break;
+        case walk_right:
+          // close left and right legs
+          SetDirection(mot_left, left_close);
+          SetDirection(mot_right, right_close);
+          break;
+        }
+        
+      /* motor directions for weight on legs23 are the exact 
+         opposite of those for legs14.  
+         In the 'switch' statement above we set the motor directions 
+         assuming the weight was on legs14.  If the quad *acutally* 
+         has its weight on legs23 we have to toggle the motor directions.*/
+      if(weight == legs23)
+        {
+        Toggle(mot_legs);
+        PlaySound(SOUND_DOUBLE_BEEP); // sound to tell us that weight is on legs23
+        }
+      else // weight == legs14
+        PlaySound(SOUND_CLICK); // sound to tell us that weight is on legs14
+      
+      // power the motors to change the valve positions (and provide more air)
+      //*** On(mot_legs); -- not needed -- supplied by task 'pumping' above.
+      
+      /* This part deals with a problem that can arise: sometimes there is no
+         change in the state of 'touch_legs' when a robot switches from one
+         walking pattern to another */
+      if(walk == old_walk)
+        until(touch_legs == 0);
+      else
+        old_walk = walk;
+      
+      /* wait until the legs have moved to their new positions and
+         there is reserve air pressure */
+      Wait(debounce_time); // debounce 'touch_legs'
+      until(touch_legs == 1 && touch_pressure == 1); 
+      
+      // shift weight to the other set of legs
+      shiftweight(); 
+      }
+/*  else
+      {
+      until(touch_pressure == 1 && touch_legs==1 && touch_shift == 1);
+      Off(mot_legs);
+      }*/
+    }
+  }
+  
+task main()
+  {
+  // Set IR transmission to long range.
+  SetTxPower(TX_POWER_HI);
+
+/* Make sure we don't have any old Messages 
+   cluttering up the memory. */
+  ClearMessage();
+      
+  // Initialize motor power and sensors
+  SetPower(mot_all, OUT_FULL);
+  SetSensor(touch_shift, SENSOR_TOUCH);
+  SetSensor(touch_legs, SENSOR_TOUCH);
+  SetSensor(touch_pressure, SENSOR_TOUCH);
+  
+  // Initialize weight distribution
+  SetDirection(mot_shift, shift_14);
+  OnFor(mot_shift, debounce_time*2);
+  if(touch_shift == 0) // we're shifting towards legs14 weight distribution
+    {
+    On(mot_shift);
+    until(touch_shift == 1);
+    Off(mot_shift);
+    }
+  weight = legs14; 
+  
+  // Initialize leg position to right_close, left_close 
+  SetDirection(mot_left, left_close);
+  SetDirection(mot_right, right_close);
+  // pump until the legs are in the correct position *and* we have reserve air pressure
+  start pumping;
+  until(touch_legs == 1 && touch_pressure == 1);
+  
+  // default action is to walk forward
+  walk = walk_fwd;  
+  old_walk = walk;
+  
+  // start the 'walking' task
+  start walking;
+  
+  // listen out for messages
+  while(true)
+    {
+    if(Message()!= 0)
+      {
+      PlaySound(SOUND_UP); // sound to say that a message has been recevied
+      
+      // error checking for Message() value
+      switch( Message())
+        {
+        case 2: // fall through
+        case 4: // fall through
+        case 5: // fall through
+        case 6: // fall through
+        case 8: // fall through
+          old_walk = walk;
+          walk = Message();
+          break;
+        default: // incorrect message value -- BARRRRRP!
+          PlaySound(SOUND_LOW_BEEP);
+          break;
+        }
+      ClearMessage();
+      }
+    }
+  }
+

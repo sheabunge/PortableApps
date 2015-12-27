@@ -1,0 +1,27 @@
+
+sub test()
+{
+  PlayTone(400, 50);
+  Wait(50);
+}
+
+sub test2()
+{
+  PlayTone(800, 50);
+  Wait(50);
+}
+
+sub test3()
+{
+  PlayTone(1000, 50);
+  Wait(50);
+}
+
+task main()
+{
+  PlaySound(SOUND_FAST_UP);
+  Wait(100);
+  test();
+  PlaySound(SOUND_DOUBLE_BEEP);
+}
+

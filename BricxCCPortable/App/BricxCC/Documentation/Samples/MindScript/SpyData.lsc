@@ -1,0 +1,19 @@
+program SpybotDataDemo {
+
+  sub factorial(ptr, n)
+  {
+    if n <= 1
+    {
+      ptr^ = 1
+    }
+    else
+    {
+      ptr^ = n * factorial(ptr, n-1)
+    }
+  }
+
+  main { /*display fred*/
+    clear sound
+  }
+}
+

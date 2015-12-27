@@ -1,0 +1,374 @@
+<HTML>
+<HEAD>
+<TITLE>Bricx Command Center 3.3 History</TITLE>
+<BODY background="jchback.jpg">
+<FONT size=+4>Bricx Command Center 3.3 History</FONT> 
+<P><IMG src="lookrul2.gif"></P>
+<h3>Enhancements (in reverse chronological order)</h3
+<ul>
+
+<li>
+Version 3.3.7.7 adds a Spybot EEPROM tool window.  
+It adds a new configurable watch tool window.  
+It adds a new generic set source value tool window.
+It adds a hot key (F2) for the pbForth console.
+The position of the 3 new tool windows and the pbForth console are now saved to and 
+loaded from the registry.
+The built-in help system has been updated to include documentation of the new NQC Spybotics API.
+The new NQC 3.0b1 keywords, constants, and commands are included.  Click the Default button
+on the NQC API tab of the Preferences dialog to update your installation.
+
+<li>
+Version 3.3.7.6 adds fast firmware download support when using the USB tower.  
+It adds support for compiling and downloading leJOS (Java) programs.  
+Existing code parsing support for Java is improved.  
+It adds a pbForth console.
+It adds code parsing support for Forth to the code explorer and procedure list windows.  
+pbForth scripts can be downloaded either from the console or the normal download button 
+(unfortunately, this feature is not quite perfect at this point).
+It adds to the distribution a command-line program called RCXTool.exe which can be used
+for lots of useful things.  From a command prompt type RCXTool -help for details.
+The Memory Map tool window is updated to allow viewing pointers in hexidecimal and the
+Spybot map is actually correct now.  It has improved Spybot support in various other places.
+It ships with an enhanced unofficial Spybot NQC API header file called spy.nqh (in the root directory).
+MindScript and LASM help is integrated into the IDE if you have the latest Mindstorms SDK installed.
+MindScript syntax highlighting now handles the comment keyword better (block string support).
+This release also adds extensive integrated help files for brickOS, leJOS, and pbForth.
+It also fixes a problem with firmware download via the serial tower in slow mode.
+And it fixes a bug with firmware download which would corrupt some alternate firmwares.
+(2003-10-27)
+
+<li>
+Version 3.3.7.5 Adds to the Clear Memory function so that it now clears all five program slots (it used to leave slot 1 untouched).
+It adds support for running in large fonts mode.  
+It also fixes the MDI merge menu and disabled close button problems that have been around for a long time.
+It fixes two bugs with the copy to clipboard function on the Analysis graph.
+(2003-05-22)
+
+<li>
+Version 3.3.7.4 Enhances editing of large files.  If you thought editing large files
+was slow in BricxCC you may want to try this new release.  It is now significantly faster.  Users with low-end
+machines may see a speed increase even with smaller files.
+The Procedure List feature (Ctrl+Shift+G) additionally supports Java source code.
+(2003-03-24)
+
+<li>
+Version 3.3.7.3 Adds support for the code explorer when syntax highlighting is turned off.  
+Desktop files now store the firmware type and restore it when a desktop is loaded (i.e., when you open a file with 
+an associated desktop file).  
+The Searching for the brick dialog now has an "Other" firmware type to make lesser known non-standard 
+firmwares feel included.
+It also fixes a problem where opening a file with an associated desktop file (same path and filename but 
+with a .dsk extension) took a very long time.
+(2003-03-07)
+
+<li>
+Version 3.3.7.2 adds .nqh as an NQC file extension.  
+Music saved from the Brick Piano can now be in NQC, MindScript, LASM, pbForth, leJOS, and brickOS C or Pascal code.
+Compiler warnings and linker errors from the brickOS compiler are now handled.  
+Users can query for the version of the NQC (2.5a5 and above) & LCC compiler (from the Preferences dialog).  
+MindScript LASM output is now available in the Code/Error listing window (requires SDK 2.5).  
+The MindScript and LASM compiler error position calculation is also vastly improved if you use SDK 2.5.
+The output of the MIDI conversion feature also now includes pbForth and leJOS.
+The code editor window can now show something called "structure lines" in a user-configurable color.
+These lines show matching brace nesting levels.  It is supported in NQC, MindScript, Java, and C/C++.  See the
+Editor tab of the Preferences dialog for the new color selection combobox.  To turn off the structure lines
+you select the color "clNone" (which is the default value).
+The Find Brick dialog now uses radio buttons for selecting the firmware type.
+The Code/Error listing window can be set to "stay on top" via the right-click context menu.
+The Joystick tool window now supports moving the robot via the regular numeric keys along the top of
+the keyboard.  These keys act in a "sticky" fashion (i.e., the robot keeps moving after the key is released).
+It fixes a bug in the Brick Piano (introduced in the previous version) which made it impossible to save
+the music to a file or to the clipboard. 
+It fixes an access violation when trying to compile a file without an extension.
+(2003-02-12)
+
+<li>Version 3.3.7.1 The menus and toolbars have been completely revamped using Actions.
+A couple new toolbar buttons have been added.  A new option to lock toolbars in their default positions
+has been added to the Preferences dialog.  This option defaults to true, so if you want to rearrange your toolbars
+you will need to turn off this option.  
+If the brick type is RCX2 the display can now be set to User Select and any source can be chosen.
+The Brick Piano can now be transposed through 8 octaves.  It also allows for customizing the note and wait times.  
+A new MIDI conversion feature has been added to the Tools menu.  It can generate NQC, MindScript, LASM, and 
+brickOS C or Pascal code either to a file or to the clipboard.  
+Users can suspend adding keyboard macros to the macro library (see View/Macro Library).
+All 8 brickOS program slots are now supported.  This release includes regular expression support in Find and Replace.  
+Users can now set the hot key for code completion, parameter hints, macro record, and macro playback via the Preferences dialog.  
+This release adds support for setting the RCX LNP Host address (dll -n#).  Associated with this is support for selecting
+the address and port to use when downloading a brickOS program (dll -r# -s#).
+It fixes several minor bugs.  LASM compilation had been broken but it is fixed in this release.
+Problems in the Diagnostic window when trying to set the display to a variable are fixed.
+(2003-01-16)
+
+<li>Version 3.3.6.6 adds the reporting of GNU compiler errors and warnings in the same manner as the 
+NQC and MindScript compilers.  It adds support for a simple project file mechanism that allows building
+a brickOS program comprised of multiple source files (all residing in the same directory).  See 
+View/Project Manager to add files to the project defined by the currently active source file.  This release
+also enhances significantly the Code Completion support for C, C++, and Pascal.  This release also adds
+Code Insight (or function parameter information) for NQC and brickOS programs.  A parameter hint pops up after an
+open parenthesis and can also be called up via Ctrl+Shift+Space. (2002-11-25)
+
+<li>Version 3.3.6.5 adds support for compiling, downloading, and running programs using the brickOS
+alternate firmware.  GNU C and C++ can both be used.  BricxCC will syntax highlight these languages
+and provide Code Completion for the brickOS API as well as C and C++ keywords.  For the adventurous,
+BricxCC also supports brickOS with GNU Pascal (with a few patches and updates to the standard brickOS
+installation).  BricxCC will syntax highlight GNU Pascal and provide Code Completion for the
+Pascal implementation of the brickOS API and GNU Pascal keywords.  NOTE: This support is a first draft
+and it will likely be enhanced or modified in the future.  C, C++, and Pascal are all also supported in 
+the Code Explorer window.  This release also adds a Procedure List dialog, accessible via Shift-Ctrl-G, which
+mirrors the functionality of the Code Explorer window.  Additionally, it provides for incremental search and
+sorting by line number, type, and name.  If you have ever used GExperts for Delphi this feature should look 
+familiar. (2002-11-19)
+
+<li>Version 3.3.6.2 adds preliminary Spybot support.  Programs can be compiled/downloaded
+via NQC, MindScript, and LASM.  Some of the additional BricxCC features also work with the Spybot
+brick.  This release fixes a bug in the Datalog XY analysis.  It adds the ability for
+users to turn off the toolbar background image.  It fixes problems with the "claim extension"
+feature for associating NQC, MindScript, and LASM file types with BricxCC.
+(2002-08-02)
+
+<li>Version 3.3.5.7 It allows for customizing the 
+number of files listed as "recent" on the file menu.  It also changes the operation when selecting 
+a recent file such that it becomes the most recently accessed file and if the file is already
+open and unmodified it simply switches focus to the already open document.
+It adjusts the layout of the watch window slightly to make it harder to accidently click on the
+"Check All" or "Check None" buttons when you intended to click "Poll Now".
+It removes the 2.0 SDK DLLs from the distribution so MindScript and LASM support will require
+the additional install of the 2.0 SDK, which is downloadable from the LEGO website.
+It fixes a problem in the Code Explorer when parsing for functions where it would incorrectly 
+list a second function if you used a parameter list of "(void)".
+It fixes a bug with code completion introduced in the previous release.
+It fixes a problem when graphing the Datalog if certain items are added to the datalog
+less frequently than other items.  Earlier graphs would "bunch" the data at the left end of 
+graph.  This release has an option (which defaults to true) that causes the graph to maintain
+the "relative time" of all the items added to the Datalog.  It fixes a "list index out of
+bounds" error when copying the graph data to the clipboard.  
+
+<li>Version 3.3.5.6 
+It adds syntax highlighting and compiler support for LEGO MindScript and LASM.  MindScript 
+programs are also supported in the Code Explorer window.  This version includes a command-line
+compiler (lcc32.exe) which uses the vpbcom.dll (and its associated DLLs) distributed as part 
+of the RCX 2.0 SDK (downloadable from the LEGO MindStorms website).  All the necessary DLLs are
+included in the BricxCC download and are installed by default.
+It fixes a bug in the Watch Graph that caused data to be "bunched" on
+either end of the horizontal axis after unchecking some of the watched items.  
+It fixes an Access Violation bug when attempting to upgrade the BricxCC registry entries.  
+It fixes a problem with NQC include path support.
+It removes the recently added syntax highlighting support 
+for several languages that have nothing to do with programmable bricks.
+(2002-07-12)
+
+<li>Version 3.3.4.5 fixes a problem with Ctrl+Alt macros where the keystroke following the macro entry 
+was being eaten.  It also fixes a bug in the Code Explorer feature which caused 
+the Code Explorer to not refresh when a new file was opened.
+(2002-04-09)
+
+<li>Version 3.3.4.4 adds preliminary (i.e., not done yet) support for syntax highlighting H8 
+assembler code.  It fixes a few minor problems
+with the color configuration via the Preferences dialog.  It fixes the "quick tab" editor feature.
+It also fixes a problem with finding the Cybermaster brick.
+(2002-03-19)
+
+<li>Version 3.3.4.2 adds support for downloading non-standard firmwares (such as pbForth).
+It introduces user-customizable syntax highlighting support for additional programming languages.
+These newly supported languages are: C++, ObjectPascal, Forth, Java, Visual Basic, Cascading Style Sheets, 
+HTML, XML, 68HC11 assembler, Tcl/Tk, Perl, PHP, and Python.  As a result of changes to the architecture to 
+support these new languages
+you may have to reconfigure your NQC color settings.  Additionally, the Forth support includes a "code 
+insight" feature like that available for NQC.  This feature (accessed via Ctrl+Space by default) lists the
+words defined in the ANS Forth standard by category.  Words defined in pbForth that are not in the ANS Forth
+standard are also listed.
+
+<li>Version 3.3.3.9 The Code Explorer preferences dialog now displays hints to explain the meaning of the 
+checkboxes and the clickable state images in the Explorer categories list.  Six new code editor options 
+can be configured via the preferences dialog: Alt sets column selection mode, Move cursor on right click, 
+Quick tab (called Smart tab in Delphi), Keep trailing blanks, Enhanced Home key, and Grouped Undo.  
+This release also adds a View|Window List dialog for easy switching between visible windows. 
+It fixes a slow shutdown problem caused by the Code Explorer.  It fixes Cybermaster problems
+on the Watch window (related to the Tacho fields and the graphing of Cybermaster-specific data).
+(2002-02-25)
+
+<li>Version 3.3.3.8 is now packaged in a single setup executable for simple
+installation.  The download is larger but it should be easier for new users to 
+use.  This release also fixes (hopefully) a couple problems with the Code Explorer
+feature.  The Code Explorer also behaves a bit better in terms of how it repaints as it parses the code.
+It attempts to keep the current node visible after each parse. 
+This release also attempts to fix the recently reported slow down problems some users are experiencing.
+Potential infinite loop problems in the Code Explorer background thread were fixed and the method for 
+launching NQC was changed so that it is now almost identical to the original technique. 
+Also in this release are slight changes to the Color configuration page of the Preferences
+dialog.  The sample code now has comments that attempt to clarify the type of each element.
+When you click on an element in the list it will move the cursor to the line
+describing that element type.  Also, a "Toolbars" menu item was put back on the View menu.  (2002-02-15)
+
+<li>Version 3.3.3.7 adds a new Macro Manager feature for maintaining libraries of keyboard macros (recorded
+via the Ctrl+Shift+R keystroke and played via the Ctrl+Shift+P keystroke).  This feature is accessible
+via the View/Macro Manager menu item.  By default BricxCC will automatically load a bricxcc.mlb macro library
+if one by that name is located in the same directory as the executable.  Keyboard macros can be edited in 
+textual form and played back via user-configurable hot keys.  This release also completes the implementation
+of Transfer item parameter macros. (2002-02-06) (This version was never actually released.)
+
+<li>Version 3.3.3.5 adds a "Tools/Configure Tools..." feature.  It isn't fully implemented yet (parameter 
+macros aren't functional).  But it does most of what
+it needs to do.  This version also adds a property page to the Code Explorer window
+that is similar in many ways to the one in Delphi.  Transfer items (i.e., the configurable tools) 
+and Code Explorer property settings are saved and restored.  A
+few bugs (access violations) related to the introduction of the Code Explorer 
+window in the previous release were fixed as well.
+
+<li>Version 3.3.3.4 makes watching the brick only while the Watch window is active
+an option on the Watch window.  It fixes a bug in SetSensorMode which caused the
+sensor mode in the Direct Control window to be incorrect.  It now terminates
+the NQC process when a timeout occurs.  It checks the NQC exit code
+(only supported in NQC version 2.4r1 and above) and properly reports errors instead
+of claiming to have completed successfully.  It implements a Code Explorer
+feature that functions similarly to the Code Explorer in Delphi.  This 
+window presents a tree structure containing the names of all the functions, 
+subroutines, and tasks in the currently active editor window.  Double clicking
+on a function, subroutine, or task name will jump to that position in the 
+editor.
+
+<li>Version 3.3.3.2 fixes a bug in the toolbar button enabling/disabling dependant on 
+whether the connection to the programmable brick is active or not.  It implements
+auto saving of the "desktop" file which stores window positions and connection/program slot
+information to a ".dsk" file associated with the ".nqc" file.  On opening a file that has 
+an associated desktop file the program will restore the settings contained in the desktop file.
+This release adds a couple new buttons to the Tools toolbar 
+(if your Tools toolbar sizes oddly after upgrading to this release
+try floating the toolbar, resize it sufficiently wide to fit all the buttons on one line, then
+dock it again).  It adds the ability to save the NQC 
+compiler output (as a ".rcx" file).  It adds a configuration setting on the "Start Up" tab of the
+preferences dialog to specify whether to always display the "Find Brick" dialog when you
+execute the "Find Brick" option.  It moves the "View/Toolbars" sub-menu to a right-click popup menu
+on the top toolbar dock site.  It adds a "Ctrl+O,O" keystroke that inserts a comment at the top of the
+current NQC file that shows the current port, brick type, and program slot.  The error message
+displayed when BricxCC cannot find NQC is improved.  BricxCC now reopens the port after it finishes
+running NQC.  An option to display source information in the compiler code listing has been added.
+(2002-01-05)
+
+<li>Version 3.3.3.1 is a major upgrade. It adds the ability to modify 
+API commands, keywords, and constants via the preferences dialog (on a new API tab).  
+If your syntax highlighting isn't working you can now
+fix it by clicking the "Default" button while the API tab is active.  This will reset the API to the
+values defined by the files in the Default sub-directory.  The manner in which the Tools menu and 
+toolbar items are enabled/disabled is fixed.  This release also provides new COM Server functionality.
+Users can control BricxCC via any Automation-enabled client.  BricxCC implements two dual interfaces: 
+IBricxCCSpirit and IBricxCCApp.  Using these two interfaces users can perform a wide variety of useful
+functions - limited only by your imagination.  (2002-01-03)
+
+<li>Version 3.3.2.13 fixes a bug in the registry upgrade routine which caused access violations on
+some installations.  (2001-12-03)
+
+<li>Version 3.3.2.12 adds Edit and Tools toolbars.  It adds images on the main menu.
+It fixes some window sizing and restoring of size and state issues.  If you exit the application
+while it is maximized it correctly saves the "restored" size of the window as well
+as its maximized state and restores those the next time the application is run.
+It makes the tool windows non-minimizable.  These changes should make it easier to 
+keep track of where the many windows are.  (2001-11-28)
+
+<li>Version 3.3.2.11 adds support for COM5 through COM8.  (2001-11-27)
+
+<li>Version 3.3.2.9 fixes a minor bug in the handling of NQC compilation errors.  All compilation errors
+should be correctly reported now.
+
+<li>Version 3.3.2.8 modifies the interface with NQC so that temporary files are written to the Windows
+temporary directory as reported by the operating system.  It features toolbars that can be docked to all four
+window edges.  Toolbars can also float.  Toolbar state and position is saved and restored.  Generally, the
+toolbars should be much more stable than in earlier releases.  Find and Replace settings and history are now
+saved and restored.  A new keystroke macro recorder is included.  Ctrl+Shift+R toggles the 
+recording of keystrokes.
+Ctrl+Shift+P will playback the previously recorded macro. (2001-11-15)
+
+<li>Version 3.3.2.2 adds support for upgrading configuration settings from earlier versions.  If the .nqc file
+extension isn't registered it will automatically "claim" it.  You can manually claim (or reclaim) the .nqc 
+extension from the Preferences dialog (on the Options tab).  The explorer right-click context menu New option 
+will now list "Not Quite C Document" as a possible new file type.  Right-click on a .nqc file for Open, New, and 
+Print options.  You can also drag a .nqc file to a printer to print it.  BricxCC registers its location under the 
+App Paths registry key so you can do "Start/Run Bricxcc" and it will be able to launch the program.
+
+<li>Version 3.3.1.9 changes the name of the program to BricxCC.  The previous name included a name registered as
+a trademark of The LEGO Company (TLC).  This release includes major enhancements to the help files.  
+The NQC Programmer's Guide is now built into the help system.  Context sensitive help for the NQC 
+language is available via the F1 key from the editor window.  Pressing F1 from most forms will
+now display the appropriate help page. (2001-10-10)
+
+<li>Version 3.3.1.7 adds the ability to pass additional switches on the command line to NQC.  Enter them in the 
+new edit control on the Preferences form.  One usage of this new feature might be to pass -D__SCOUT_COMPAT to
+NQC so it will compile references to the local(x) and Call(x) commands.  Use at your own risk.  Also fixed
+a small problem with the code completion feature when text is currently selected. (2001-10-5)
+
+<li>Version 3.3.1.6 adds NQC program download support by passing -Susb if 
+the USB tower is selected.  It also fixes a bug in syntax highlighting that 
+has been around (and un-noticed by me until today) for a very long time.  
+For complicated reasons some commands like abs, AGC, sign, ActiveEvents (and 
+probably others) were not being highlighted.  It had to do with case 
+sensitive sorting versus case insensitive sorting and a broken binary 
+search routine.  I also made Ctrl+Space the default hotkey for code 
+completion and Ctrl+J the default hotkey for code templates. (2001-9-29)
+
+<li>Version 3.3.1.4 USB support is now tested and confirmed to be working.  Downloading a program via 
+NQC will NOT work yet since I haven't changed the parameters passed to NQC.  All the other features
+worked with the USB tower in my testing.  The code completion feature now has a configurable hot-key.  
+In the Keystrokes editor add the ecCompletionProposal command and
+assign your favorite keystroke to it.  Ctrl+Space is what I use.  (2001-9-29)
+
+<li>Version 3.3.0.12 fixes a problem I introduced in version 3.3.0.10 where
+new keystroke commands would not be properly saved.  USB support is confirmed to 
+not be working yet. (2001-9-29)
+
+<li>Version 3.3.0.10 is a rough stab at implementing USB support (without actually being able to test it).
+Fixed a bug that caused Keystroke modifications to not be reflected in the editor until after a restart.
+Fixed an Access Violation when closing the program with multiple open edit windows with modifications.
+Changed the error message that occurs when the program can't launch NQC so that it is more descriptive.
+Added a "code completion" feature (hot-key is Ctrl+Space).  It displays a scrollable list of all the 
+commands, keywords, and constants of NQC.  As you type it performs a case-insensitive incremental search
+for a matching item.  Added a "code template" feature (somewhat redundant) that
+uses the format in Delphi (and features a similar code template editor interface).  This feature has a 
+configurable hot-key.  In the Keystrokes editor add the ecAutoCompletion command and assign your 
+favorite keystroke to it.  I use Shift+Space.  This feature will replace the template name you type in 
+the editor with the template body as defined via the code template editor. (2001-9-28)
+
+<li>Version 3.2.9.7 restores the previously removed ability to disconnect the COM port while running the program.  
+This ability is provided via a menu option (always enabled at present) on the Tools menu.
+
+<li>Version 3.2.9.6 restricts editor font selection to Fixed-width fonts only.  It also
+implements the memory map for the Scout (finally).  A few more configurable graph settings were also added 
+(border color and style in several places). (2001-5-22)
+
+<li>Version 3.2.9.4 adds a "Series Prompt" dialog when you Ctrl+LeftClick on the chart but 
+not on a particular series.  It also fixes the problem found in previous releases where editing 
+any chart configuration parameter would re-create all the series (causing any series-specific 
+settings to be reset).  Now it only re-creates series when you change the chart type. (2001-5-21)
+
+<li>Version 3.2.9.0 adds a graphing capability to the Watch window (which is relatively cool).  
+It also removes the hour-glass cursor "feature" when polling from the Watch window.  It removes the 
+"can't find brick" message when the startup option is "don't connect to the brick". (2001-5-20)
+
+<li>Version 3.2.8.2 mostly completes (the first go at) the Datalog graphing capability.
+Ctrl+LeftClick on a series to edit its configuration. (2001-5-19)
+
+<li>Version 3.2.7.3 adds a very cool (imho) Datalog graphing capability.
+
+<li>Version 3.2.7.2 adds a new Remote dialog.
+
+<li>Scout and RCX2 support for compiling and downloading NQC programs.  RCX2 is supported in all the
+other capabilities.  Scout support in some areas is still under development but most 
+of the advanced features function correctly.
+
+<li>No Spirit required.  If you only own a Scout and you have an IR tower and cable you can now use it!
+<li>User-modifiable syntax highlighting options.
+<li>A working multi-level undo/redo capability.
+<li>Program slot locking.
+<li>Improved integration with NQC (including user-definable timeout values).
+<li>Enhanced dockable toolbars.
+<li>Enhanced search/replace dialogs.
+<li>Many more user preferences for configuring the program.
+<li>Syntax printing with print preview and page setup.
+<li>Plus a few other things I've forgotten at present.
+</ul>
+<p>Comment to: 
+<ADDRESS><A href="mailto:bricxcc@comcast.net" subject="Bricx Command Center 3.3">bricxcc@comcast.net</A>
+</ADDRESS>
+</p>
+</BODY>
+</HTML>

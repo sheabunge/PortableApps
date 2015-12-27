@@ -1,0 +1,26 @@
+/*   HiTechnic Experimenter's Kit for the SuperPro
+
+Experiment - 4 Light Level sensor
+
+This program reads the analog value from a photo cell and displays the light level.
+
+*/
+
+#define SUPERPRO_PORT IN_1
+
+task main()
+{
+  int value;
+
+  SetSensorLowspeed(SUPERPRO_PORT); // set sensor port 1 to low speed serial (I2C)
+  Wait(100);
+
+  while (true) {
+    value = SensorHTSuperProAnalog(SUPERPRO_PORT, HTSPRO_A0);
+    TextOut(0, LCD_LINE1, "Light:     ");
+    NumOut(6*6, LCD_LINE1, value);
+    Wait(50);
+  }
+}
+
+

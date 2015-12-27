@@ -1,0 +1,7 @@
+task main()
+{
+OnFwd(OUT_A);
+Wait(50);
+Float(OUT_A);
+}
+

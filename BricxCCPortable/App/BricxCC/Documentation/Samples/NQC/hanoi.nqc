@@ -1,0 +1,574 @@
+/* solves 'Towers of Hanoi' puzzle for discs = 1 through 5
+
+   NOTE: the grabber assembly MUST be manually rotated to a position which is slightly
+   counter-clockwise (anti-clockwise) of post #1 before running the
+   program. 
+
+   NQC 2.0 code -- note, this code was written before array support was added to NQC
+   
+   Program (c)JP Brown 2000 <envcons@ameritech.net> 
+   
+   */
+
+#define mask0 0xfff0 // masks out low nibble of low word
+#define mask1 0xff0f // masks out high nibble of low word
+#define mask2 0xf0ff // masks out low nibble of high word
+#define mask3 0x0fff // masks out high nibble of high word
+
+#define negmask 0x7fff // 0111 1111 1111 1111 -- masks out the sign bit.
+
+#define turnmotor OUT_C  // 9V gear motor -- rotates the grabber assembly
+#define turn_1_3 OUT_FWD // rotate clockwise from platform 1 to platform 3
+#define turn_3_1 OUT_REV // rotate anti-clockwise from platform 3 to platform 1
+#define turntime 80
+
+#define liftmotor OUT_B //  9V gear motor -- raises and lowers grabber assembly on the lift boom
+#define liftup OUT_FWD  //  raise claw assembly
+#define liftdn OUT_REV  //  lower claw assembly
+#define lifttime 20
+
+#define grabmotor OUT_A    // 9V gear motor -- controls the pneumatic valve that actuates the claw
+#define grabopen OUT_FWD   // open the claw
+#define grabclose OUT_REV  // close the claw
+
+#define grabtime 40        // time to turn the motor to effect the change of switch position ('piston up' or 'piston down')
+#define dntime 50          // time to move down before opening the claw to drop a 'disc' onto a 'post'
+#define turnstep 2         // time interval for "task babysteps()"
+
+#define uptouch SENSOR_1   // touch sensor to detect when claw reaches the top of the lift boom
+#define dntouch SENSOR_2   // touch sensor to detect when the claw has descended to within grabbing rage of a 'disc'
+#define turntouch SENSOR_3 // touch sensor to detect the axle-balls opposite the 'posts'.
+
+#define turnthreshold 20   // PERCENT value > which turntouch considers that it is being pressed by an axle-ball
+#define upthreshold 1000   // RAW value <=  which the uptouch sensor considers it is being pressed
+#define dnthreshold 980    // RAW value <=  which the dntouch sensor considers it is being pressed
+
+#define GO 9 // message value to continue program execution if the DebugWait fragment has halted the program
+
+int discs;      // var#0  - number of discs to solve for
+int arrayD_lo;  // var#1  - first part of 'array' D 
+int arrayD_hi;  // var#2  - second part of 'array' D
+int arrayS_lo;  // var#3  - first part of 'array' S
+int arrayS_hi;  // var#4  - second part of 'array' S
+int index;      // var#5  - index value of a value to get/set from an 'array' 
+int val;        // var#6  - the value to sent to, or returned from, an 'array'
+int mask;       // var#7  - a bitmask used in getting/setting values in an 'array'
+int i;          // var#8  - counter for iterations
+int temp;       // var#9  - temporary value holder 
+int dir;        // var#10 - direction of rotation
+int curpos;     // var#11 - current position (post # 1,2, or 3)
+int frompos;    // var#12 - position to get disc from (post # 1,2, or 3)
+int topos;      // var#13 - position to move disc to (post # 1,2, or 3)
+
+
+/*-------------------------------------------------------------- |
+| ----------------- debug helper fragment ---------------------- |
+| --------------------------------------------------------------*/
+
+/* Halts program execution until the RCX recieves the message value
+   defined for GO (=9 in this case).  Not used in the finished
+   program, but useful for debugging.
+   
+   Invoke with one of the system sound constants, e.g.,
+   DebugWait(SOUND_LOW_BEEP);
+   
+   If you use DebugWait at more than one point in the code, use 
+   different sound constants to establish which of the 
+   debug breakpoints you are at.*/
+   
+void DebugWait(const int sound) 
+  {
+  PlaySound(sound);
+  until(Message()==GO);
+  ClearMessage();
+  }
+
+
+/*-------------------------------------------------------------- |
+| -------------- code to provide 'array' functionality --------- |
+| --------------------------------------------------------------*/
+/* 
+   * The 'array' indices are 0 based.
+   * Two ints are used for each 'array'.  
+   * "task solve()" requires two 'arrays' (S[] and D[]).  The maximum index
+     required is ("discs"+2).  
+   * Each cell in an 'array' occupies one nibble (4 bits), giving us 
+     four cells in each int, or a total of eight cells in a complete 
+     'array' (index 0-7).  
+   * Since each cell is a nibble, each cell can hold a value from 0 to 15. 
+*/
+
+
+/* Deals with the problem of the sign bit being set --
+   in this case you cannot use integer division as
+   a bitwise right-shift function */
+void FudgeSignBit() 
+  {
+  if(index == 3 && temp < 0) // bit 15 in temp is 1, thus most siginificant nibble (MSN) is 1xxx -- division won't as a right-shift since temp is negative.
+    {
+    temp &= negmask;  // toggle the sign bit to get +ve number (but MSN is now 0xxx rather than 1xxx)
+    temp /= 4096;   // equivalent to temp >> 12,  decrease to in range so that loword is xxxx 0xxx ... and our datum is in the LSN
+    index=0;        // set "index" = 0 (since we use index as a counter in the next step), and then...
+    temp |= 8;      // reset the fourth bit to 1 with ORmask 0000 0000 0000 1000
+    }
+  }
+
+/* Sets bitmask for writing to an 'array' */
+void SetPokeMask()
+  {
+  temp = index;
+  if (index > 3) temp -= 4;
+  if(temp == 0) mask = mask0; //1111 1111 1111 0000
+  if(temp == 1) mask = mask1; //1111 1111 0000 1111  
+  if(temp == 2) mask = mask2; //1111 0000 1111 1111
+  if(temp == 3) mask = mask3; //0000 1111 1111 1111
+  }
+
+/* Sets bitmask for reading from an 'array' */
+void SetPeekMask()
+  {
+  temp = index;
+  if (index > 3) temp -= 4;
+  if(temp == 0) mask = ~mask0; //0000 0000 0000 1111
+  if(temp == 1) mask = ~mask1; //0000 0000 1111 0000
+  if(temp == 2) mask = ~mask2; //0000 1111 0000 0000
+  if(temp == 3) mask = ~mask3; //1111 0000 0000 0000
+  }
+
+/* Expects: "index" (0-7) for storage location, and
+            "val" (0-15) for value to store.
+           
+   Uses bit-masking and bit-shifting to store "val"
+   in a nibble (4-bit block) of arrayD_lo or arrayD_hi 
+   as indicated by "index"...
+   "index" 0-3 stores "val" in arrayD_lo: "index" 0 is low word, low nibble; 
+                                          "index" 1 is low word, high nibble; 
+                                          "index" 2 is high word, low nibble
+                                          "index" 3 is high word, high nibble; 
+   "index" 4-7 stores "val" in arrayD_hi: "index" 4 is low word, low nibble; 
+                                          "index" 5 is low word, high nibble; 
+                                          "index" 6 is high word, low nibble
+                                          "index" 7 is high word, high nibble; 
+   Caution:
+        1. there is no bounds checking!
+        2. val is modified during the "poke" process! */ 
+sub pokeD()
+  {
+  SetPokeMask();
+    
+  while(temp>0) 
+    {
+    val *= 16; // eqivalent to val << 4
+    --temp; 
+    }
+  
+  if(index < 4)
+    {
+    temp = arrayD_lo;
+    }
+  else
+    {
+    temp = arrayD_hi;
+    }
+    
+  temp &= mask;
+  temp |= val;
+  
+  if( index < 4 )
+    {
+    arrayD_lo = temp;    
+    }
+  else
+    {
+    arrayD_hi = temp;
+    }
+  }
+
+/* Expects: "index" (0-7).  
+
+   Retrieves the value (0-15) from position index (0-7) in the
+   'array' composed of arrayD_lo and arrayD_hi and
+   assigns it to "val".
+   
+   Caution:
+          1. there is no bounds checking for "index"
+          2. "index" is modified during the sub */
+sub peekD()
+  {
+  SetPeekMask();
+  if(index < 4)
+    {
+    temp = arrayD_lo;
+    }
+  else
+    {
+    temp = arrayD_hi;
+    }
+  
+  temp &= mask;
+  if(index > 3) index -= 4;
+  
+  FudgeSignBit(); // checks "temp" for bit 15=1 (i.e., negative number).  If we want the datum in the high word's high nibble, adjust accordingly...
+                      
+  while(index > 0)
+    {
+    temp /= 16; // equivalent to temp >> 4, but must have used FudgeSignBit() to adjust for negative numbers at index=3 or index=7
+    --index;
+    }
+  val = temp;
+  }
+
+/* Similar in all respects to "sub pokeD()", except
+   that arrayS_lo and arrayS_hi are used for storage */
+sub pokeS()
+  {
+  SetPokeMask();
+    
+  while(temp>0) 
+    {
+    val *= 16; // eqivalent to val << 4
+    --temp; 
+    }
+  
+  if(index < 4)
+    {
+    temp = arrayS_lo;
+    }
+  else
+    {
+    temp = arrayS_hi;
+    }
+    
+  temp &= mask;
+  temp |= val;
+  
+  if( index < 4 )
+    {
+    arrayS_lo = temp;    
+    }
+  else
+    {
+    arrayS_hi = temp;
+    }
+  }
+
+/* Similar in all respects to "sub peekD()", except
+   that arrayS_lo and arrayS_hi are used for storage */
+sub peekS()
+  {
+  SetPeekMask();
+  if(index < 4)
+    {
+    temp = arrayS_lo; 
+    }
+  else
+    {
+    temp = arrayS_hi;
+    }
+  
+  temp &= mask;
+  if(index > 3) index -= 4;
+  
+  FudgeSignBit(); // checks temp for bit 15=1 (i.e., negative number).  If we want the datum in the high word's high nibble, adjust accordingly...
+  
+  while(index > 0)
+    {
+    temp /= 16; // equivalent to temp >> 4, but must have used FudgeSignBit() to adjust for negative numbers at index=3 or index=7
+    --index;
+    }
+  val = temp;
+  }
+
+/* Helper functions to get/set 
+   values in 'array' D */
+void SetD(int ind, int vl)
+  {
+  val = vl;
+  index = ind;
+  pokeD();
+  }
+  
+void GetD(int ind)
+  {
+  index=ind;
+  peekD();
+  }
+
+/* Helper functions to get/set 
+   values in 'array' S */
+void SetS(int ind, int vl)
+  {
+  val = vl;
+  index = ind;
+  pokeS();
+  }
+
+void GetS(int ind)
+  {
+  index = ind;
+  peekS();
+  }
+
+
+/*-------------------------------------------------------------- |
+| ----------------- Initialization routines -------------------- |
+| --------------------------------------------------------------*/
+
+/* One-time initialization.  Rotates the grabber assembly
+   clockwise until the first axle-ball is encountered.  
+   
+   NOTE: the grabber assembly MUST be manually rotated to a position 
+         which is slightly counter-clockwise (anti-clockwise if you're British) 
+         of post #1 before running the program. */
+void init()
+  {
+  up();
+  start babysteps;
+  until(turntouch > turnthreshold);
+  stop babysteps;
+  Off(turnmotor);
+  grab(grabopen);
+  }
+  
+/* Waits for an incoming Message and, if the
+   message value is (>0 && <=5), sets "discs" to the 
+   value of the message.  Otherwise sets "discs"
+   to 0. 
+   NOTE: "task main" checks the value of "discs" and
+         interprets a value of 0 as an error (i.e., will not
+         begin the solution) */
+void waitmessage()
+  {
+  until(Message() > 0)
+    {
+    PlaySound(SOUND_CLICK); // annoying "beep" to remind us that 
+    Wait(100);              // the RCX is waiting for a message
+    };
+  discs = Message();
+  ClearMessage();
+  if( discs > 5 ) 
+    {
+    discs = 0; //acts as return value
+    PlaySound(SOUND_LOW_BEEP); // indicates error
+    }
+  }
+
+/* Resets variables and re-initializes 'arrays' */
+void reset()
+  {    
+  index     = 0;
+  arrayD_lo = 0; 
+  arrayD_hi = 0;
+  arrayS_lo = 0;
+  arrayS_hi = 0;
+  val       = 0;
+  mask      = 0;
+  temp      = 0;
+  curpos    = 1;
+  
+  dir = discs; // }
+  dir &= 1;    // } dir = discs & 1
+  
+  i = 0;
+  
+  while( i <= (discs + 2) )
+    {
+    SetD(i, 1);      // D[i] = 1
+    SetS(i, i + 1);  // S[i] = i+1
+    ++i;
+    }
+
+  GetS(0); // }
+  i = val; // } i = S[0] 
+  }
+
+
+/*-------------------------------------------------------------- |
+| ----------------- Grabber movement code ---------------------- |
+| --------------------------------------------------------------*/
+
+/* Controls rotational movement of the grabber
+   assembly. */
+void moveto(int pos)
+  {
+  int ntimes;
+  if(curpos != pos) {
+     if(curpos < pos){
+        SetDirection(turnmotor, turn_1_3);
+        }
+    else {
+        SetDirection(turnmotor, turn_3_1);
+        }
+    ntimes = abs(pos-curpos);
+    turn(ntimes);
+    curpos=pos;
+    }
+  }
+
+/* Rotate the grabber assembly "times" (1 or 2) posts in the
+   direction of rotation 
+   
+   NOTE: the direction of rotation must be set before
+         calling this code. */
+void turn(int& times)
+  {
+  while(times > 0){
+     On(turnmotor);
+     Wait(turntime);
+     Float(turnmotor); 
+     start babysteps;
+     until(turntouch > turnthreshold);
+     stop babysteps;
+     Off(turnmotor);
+     --times;
+     };
+  }
+
+/* Moves the claw up until it hits the
+   uptouch sensor at the top of the lift boom */
+void up()
+  {
+  SetPower(liftmotor, OUT_FULL);
+  SetDirection(liftmotor, liftup);
+  On(liftmotor);
+  until(uptouch <= upthreshold );
+  Off(liftmotor);
+  }
+  
+/* Moves the claw down until the dntouch sensor detects
+   a disc, and then closes the claw. */
+void downgrab()
+  {
+  SetPower(liftmotor, OUT_FULL);
+  SetDirection(liftmotor, liftdn);
+  On(liftmotor);
+  until(dntouch < dnthreshold);
+  Off(liftmotor);
+  grab(grabclose);
+  }
+
+/* Moves the claw down a for a preset time, such
+   that the jaws are *just* either side of a post, 
+   then opens the claw to drop the disc onto the post. */
+void downdrop()
+  {
+  SetPower(liftmotor, OUT_HALF);
+  SetDirection(liftmotor, liftdn);
+  On(liftmotor);
+  Wait(dntime);
+  Off(liftmotor);
+  grab(grabopen);
+  }
+
+/* Opens/closes the claw */
+void grab(const int openclose)
+  {
+  SetDirection(grabmotor, openclose);
+  On(grabmotor);
+  Wait(grabtime);
+  Float(grabmotor);
+  }
+
+  
+/*-------------------------------------------------------------- |
+| --------------------- Tasks ---------------------------------- |
+| --------------------------------------------------------------*/
+
+/* This is the code that actually provides the core
+   solution and controls the grabber to pick up, move, and
+   drop the discs. */
+task solve()
+  {
+  int t;
+  while(true)
+    {
+    GetS(0); // val = S[0]
+    i = val;
+    
+    if(i > discs) // solution is complete
+      {
+      break;
+      }
+    GetD(i); // val = D[i]
+    frompos = val;
+        
+    topos = frompos;
+
+    t = i;
+    t &= 1;
+    if (t == 1) 
+       {
+       topos += dir;
+       }
+    else
+       {
+       topos += 1-dir;
+       }
+    t = topos / 3;                // } equivalent to
+    topos = topos - (t * 3) + 1;  // } (topos % 3) + 1
+
+    moveto(frompos);
+    downgrab();
+    up();
+    moveto(topos);
+    downdrop();    
+    up();
+    
+    SetD(i, topos);   // D[i] = topos
+    SetS(0, 1);       // S[O] = 1
+    GetS(i);          // val = S[i]
+    SetS(i - 1, val); // S[i-1] = val
+    SetS(i, i + 1);   // S[i] = i + 1
+    }
+  }
+
+/* Makes small, incremental movements in the direction of rotation.
+   
+   NOTE: the direction of rotation must be set before 
+         calling this code. */
+task babysteps()
+  {
+  while(true)
+    {
+    On(turnmotor);
+    Wait(turnstep);
+    Float(turnmotor);
+    Wait(10); // give the RCX time to catch up with the latest reading from turntouch
+    }
+  }
+
+/* Sensor initialization and outer
+   program loop*/
+task main()
+  {
+  // Motor initialization (liftmotor is dealt with in the movement code)
+  SetPower(turnmotor, OUT_FULL);
+  SetPower(grabmotor, OUT_FULL);
+  SetDirection(turnmotor, turn_1_3);
+
+  // Sensor initializtion
+  SetSensorType(dntouch, SENSOR_TYPE_TOUCH);
+  SetSensorMode(dntouch, SENSOR_MODE_RAW);
+  SetSensorType(turntouch, SENSOR_TYPE_TOUCH);
+  SetSensorMode(turntouch, SENSOR_MODE_PERCENT);
+  SetSensorType(uptouch, SENSOR_TYPE_TOUCH);
+  SetSensorMode(uptouch, SENSOR_MODE_RAW);
+  
+  // One-time initialization to locate starting post
+  init();   
+  
+  // Main program loop
+  while(true)
+    {
+    waitmessage(); // wait for a message containing the number of discs
+    
+    if(discs > 0){ // if the number of discs is valid, begin solution:
+      reset();           // * reinitialize variables
+      start solve;       // * start solution
+      until( i > discs); // * wait for solution to complete
+      moveto(1);         // * move back to starting post
+      PlaySound(SOUND_DOUBLE_BEEP); // declare that RCX is ready for the next go
+      }
+    }
+  }
+

@@ -1,0 +1,29 @@
+program test {
+  #include <RCX2.h>
+  #include <RCX2TxRC.h>
+  #include <RCX2TxSpybot.h>
+
+//  output A on 1
+  
+  main {
+/*
+    forward A
+    on A
+    wait 50
+    float A
+*/
+//    TxSpybot_Init
+//    TxSpybot_MsgBroadcastBot(9, 0, 1)
+//    TxSpybot_SendBotMsg
+//    TxSpybot_MsgControllerButton(9, cTxButton1)
+//    TxSpybot_SendControllerCommandMsg
+//    TxSpybot_MsgControllerPing(9)
+//    TxSpybot_SendControllerPingMsg
+    TxRC_Init
+    TxRC_Msg(cTxRC_Channel1, cTxRC_Fd, cTxRC_Fd)
+    TxRC_Send
+  }
+
+
+}
+

@@ -1,0 +1,153 @@
+program test {
+
+  #include <RCX2.h>
+  #include <RCX2MLT.h>
+  #include <RCX2Sounds.h>
+//  #include <RCX2Def.h>
+
+  var Motion = 0
+  var temp = 0
+  var Action = 0
+  var Moveflag = 0
+  var Bright = 0
+  var delta = 0
+  var Dark = 0
+  var vStep = 0
+  var vPeakStep = 0
+  var vOldLight = 0
+  var vNewLight = 0
+  var proximityReading = 0
+  var lightSensor = 0
+  var baseLightValue = 0
+  var loopDone = 0
+
+  sensor light3 on 3
+  light3 is light as percent
+
+  sensor touch1 on 1
+  touch1 is switch as boolean
+  
+  timer Timer1
+
+  event tPress_touch1EventPress when touch1.pressed
+
+
+  macro UL_LIFT {
+
+    comment (0, 0 ) "ULK picks things up by running his arm motor in
+    reverse.  ULK knows the object is picked up when the arm presses against
+    the limit sensor."
+
+    direction [  ] [ C ]
+    on [ C  ]
+    wait 50
+    wait until tPress_touch1EventPress
+    off [ C  ]
+  }
+
+  macro UL_TURN {
+
+    comment (0, 0 ) "ULK turns by running the driving motor in reverse.
+    You may need to change the turning time to compensate for different
+    flooring materials."
+
+    direction [  ] [ A ]
+    on [ A  ]  for 290
+    off [ A  ]
+    direction [ A  ] [ ]
+  }
+
+  macro UL_DROP {
+
+    comment (0, 0 ) "ULK drops things by running his arm motor forward.
+    When the arm presses the limit switch#c ULK turns off the motor."
+
+    direction [ C  ] [ ]
+    on [ C  ]
+    wait 50
+    wait until tPress_touch1EventPress
+    off [ C  ]
+  }
+
+  main {
+    ext InterfaceType "kRoverBot"
+//    rcx_ClearTimers
+    bbs_GlobalReset([A B C])
+    trigger tPress_touch1EventPress
+
+    comment (0, 0 ) "This program has ULK searching for LEGO bricks with
+    which to build its nest.\r\rULK expects to find dark bricks (black or
+    blue) against a brighter background."
+
+    forever {
+
+      comment (0, 0 ) "ULK lowers its arm to aim the light sensor at the
+      floor."
+
+      direction [  ] [ C ]
+      on [ C  ]  for 30
+
+      comment (0, 0 ) "ULK takes a light reading and sets a threshold value
+      for finding bricks.  Here ULK thinks it found a brick when the light
+      sensor reading drops by 3%.\r\rYou may need to change this value for
+      your circumstances."
+
+      vOldLight = (light3*10)
+      vOldLight -= 30
+
+      comment (0, 0 ) "ULK begins driving forwards in it#ss search for
+      bricks.  It will drive forward for 10 seconds or until it finds a brick."
+
+      direction [ A  ] [ ]
+      clear Timer1
+      on [ A  ]
+      loopDone = 0
+      while loopDone = 0 {
+
+        comment (0, 0 ) "This is a loop to monitor the light sensor and a
+        timer.  The loop is done when the light sensor reads less than the
+        threshold#c or the timer runs past 10 seconds."
+
+        if light3 < (vOldLight / 10) {
+
+          comment (0, 0 ) "ULK found a brick!!!  Now drive just a tiny bit
+          further forward so ULK can pick it up.  The delay of 0.2 seconds may
+          need tweeking for your circumstances."
+
+          loopDone = 10
+          wait 30
+        }
+        else
+        {
+          if timer1 < 100{
+          }
+          else
+          {
+
+            comment (0, 0 ) "ULK ran out of time searching for a brick."
+
+            loopDone = 10
+          }
+        }
+      }
+
+      comment (0, 0 ) "Record the timer value.  We will need it when
+      returning to the nest."
+
+      delta = Timer1
+      off [ A  ]
+      UL_LIFT
+      UL_TURN
+      on [ A  ]  for (delta*10)
+      UL_DROP
+      UL_TURN
+
+      comment (0, 0 ) "Turn just a tiny bit more to prevent searching the
+      same area again."
+
+      direction [  ] [ A ]
+      on [ A B C  ]  for 10
+    }
+  }
+  
+}

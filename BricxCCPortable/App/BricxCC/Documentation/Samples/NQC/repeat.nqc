@@ -1,0 +1,10 @@
+#include "spy.nqh"
+task main()
+{
+  repeat (3)
+  {
+    OnFor (OUT_A,200);
+    Wait (200);
+  }
+}
+

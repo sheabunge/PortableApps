@@ -1,0 +1,23 @@
+#pragma noinit
+
+task main()
+{
+  SetPower(OUT_A+OUT_B+OUT_C, 5);
+  SetDirection(OUT_A+OUT_B+OUT_C, OUT_FWD);
+  int x = Random(20);
+  int y = Random(30);
+  if (x < y)
+    SetPower(OUT_A, 3);
+  else
+    SetPower(OUT_C, 3);
+  PlaySound(SOUND_CLICK);
+  Wait(200);
+  while (true)
+  {
+    PlaySound(SOUND_DOWN);
+    Wait(200);
+    if (x < 10) break;
+    x = Random(20);
+  }
+}
+

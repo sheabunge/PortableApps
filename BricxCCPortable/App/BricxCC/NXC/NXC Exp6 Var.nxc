@@ -1,0 +1,71 @@
+/*   HiTechnic Experimenter's Kit for the SuperPro
+
+Experiment - 6 Variation - Complex Reaction Time Measurement
+
+This program measures the time taken to press a button switch after an LED is turned on.
+
+*/
+
+#define SUPERPRO_PORT IN_1
+
+task main()
+{
+  int t, t0;
+
+  SetSensorLowspeed(SUPERPRO_PORT); // set sensor port 1 to low speed serial (I2C)
+  Wait(100);
+
+  // Set B0 & B1 for output
+  SetSensorHTSuperProDigitalControl(SUPERPRO_PORT, 0x3);
+
+  while (true) {
+    TextOut(0, LCD_LINE4, "Running   ");
+
+    // Turn off LEDs
+    SetSensorHTSuperProDigital(SUPERPRO_PORT, 0);
+
+    // Wait a random number of seconds from 3 to 8
+    Wait((Random(6)+3)*1000);
+
+    // Record start time
+    t0 = CurrentTick();
+
+    int r=Random(100);
+    if (r<50) {
+      // Turn on the Red LED
+      SetSensorHTSuperProDigital(SUPERPRO_PORT, 0x1);
+
+      // When LED first comes on, button must not be pressed (or player is cheating.)
+      until((SensorHTSuperProDigital(SUPERPRO_PORT) & 0x30) == 0);
+    
+      // Until Red button pressed
+      until((SensorHTSuperProDigital(SUPERPRO_PORT) & 0x30) == 0x10);
+    } else {
+      // Turn on the Green LED
+      SetSensorHTSuperProDigital(SUPERPRO_PORT, 0x2);
+
+      // When LED first comes on, button must not be pressed (or player is cheating.)
+      until((SensorHTSuperProDigital(SUPERPRO_PORT) & 0x30) == 0);
+
+      // Until Green button pressed
+      until((SensorHTSuperProDigital(SUPERPRO_PORT) & 0x30) == 0x20);
+
+    }
+
+    // Calculate time
+    t = CurrentTick() - t0;
+
+    // Turn off LED
+    SetSensorHTSuperProDigital(SUPERPRO_PORT, 0);
+
+    TextOut(0, LCD_LINE4, "Time:     ");
+    NumOut(6*6, LCD_LINE4, t);
+
+    // First wait for buttons to be released
+    until((SensorHTSuperProDigital(SUPERPRO_PORT) & 0x30) == 0);
+
+    // Then until both buttons pressed again to reset
+    until((SensorHTSuperProDigital(SUPERPRO_PORT) & 0x30) == 0x30);
+  }
+}
+

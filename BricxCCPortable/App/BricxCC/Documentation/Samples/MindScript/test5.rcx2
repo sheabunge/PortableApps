@@ -1,0 +1,17 @@
+program TestRCX2 {
+  #include "Spybot.h"
+  #include "Globals.h"
+
+  sub fredFred {
+    local x
+    x = 0
+    x += 3
+  }
+  
+  main {
+    fredFred
+    Disp(ledSparkle)
+    wait 100
+  }
+
+}

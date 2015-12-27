@@ -1,0 +1,41 @@
+#pragma noinit
+
+#define C4 262
+#define half_a_second 50
+#define AmbientTemp SENSOR_2
+#define RotationAmount SENSOR_1
+
+task main()
+{
+  int SoundUpCount = 0;
+  int loopCount = 0;
+
+  if ((RotationAmount < 50 && loopCount >= 4) || AmbientTemp < 32 || Message() == 13)
+  {
+    PlaySound(SOUND_DOUBLE_BEEP);
+    Wait(200);
+    PlaySound(SOUND_DOWN);
+  }
+  else
+  {
+    Wait(400);
+    PlaySound(SOUND_CLICK);
+  }
+/*
+  while (true)
+  {
+    if (SENSOR_1)
+    {
+      PlaySound(SOUND_UP);
+      SoundUpCount++;
+    }
+    else
+      PlaySound(SOUND_CLICK);
+
+    if (SoundUpCount > 5)
+      break;
+  }
+  PlayTone(C4, half_a_second);
+*/
+}
+

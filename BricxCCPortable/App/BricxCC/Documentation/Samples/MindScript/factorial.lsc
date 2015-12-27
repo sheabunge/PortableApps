@@ -1,0 +1,22 @@
+program Fact {
+
+  sub factorial(ptr, n)
+  {
+    if n < 2
+    {
+      ptr^ = 1
+    }
+    else
+    {
+      factorial(ptr, n - 1)
+      ptr^ = n * ptr^
+    }
+  }
+
+  var temp = 0
+
+  main {
+    factorial(@temp, 4)
+  }
+}
+

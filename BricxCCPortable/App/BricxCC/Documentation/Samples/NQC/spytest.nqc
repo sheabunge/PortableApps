@@ -1,0 +1,93 @@
+#pragma noinit
+
+SOUNDEFFECT my_effect {
+    Gate(3, 10),
+    Glide(294, 660, 60),  // testing
+    GateOff()//,
+//  RepeatEffect()
+};
+
+SOUNDEFFECT trill {
+  Gate(4, 10),
+  Tone(1000, 50),
+  Gate(1, 5),
+  Tone(2000, 50),
+  RepeatEffect()
+};
+
+SOUNDEFFECT beep {
+  Gate(1, 10),
+  Glide(294, 660, 60),
+  GateOff(),
+  WaitEffect(255),
+  Vibrato(294, 660, 60),
+  FixedWaitEffect(100),
+  FixedTone(500, 50),
+  Tone(300, 50),
+  RepeatEffect()
+};
+
+ANIMATION ScanUp {
+  AnimateLED(LED_RED1, 10),
+  AnimateLED(LED_RED2, 10),
+  AnimateLED(LED_RED3, 10),
+  RepeatAnimation()
+};
+
+ANIMATION ScanDown {
+  AnimateLED(LED_RED1, 10),
+  AnimateLED(LED_RED2, 10),
+  AnimateLED(LED_RED3, 10)
+};
+
+ANIMATION my_animation {
+  AnimateLED(LED_RED1, 50),
+  AnimateLED(LED_RED2, 50),
+  AnimateLED(LED_RED3, 50),
+  AnimateLED(LED_RED2, 50),
+  RepeatAnimation()
+};
+
+ANIMATION animation2 {
+  AnimateLED(LED_RED1, 50),
+  AnimateLED(LED_RED2, 50),
+  AnimateLED(LED_RED3, 50),
+  AnimateLED(LED_RED2, 50)
+};
+
+sub Fred()
+{
+  FancyMove(MOVE_FANCY_ZIGZAG, 500);
+  if (SENSOR_1 < 100)
+    SetAnimation(my_animation);
+  else
+    SetAnimation(animation2);
+}
+
+task main()
+{
+  SetPower(OUT_A+OUT_B+OUT_C, 3);
+  SetDirection(OUT_A+OUT_B+OUT_C, OUT_FWD);
+  int x = 10;
+  int y = 30;
+  if (x < y)
+    SetPower(OUT_A, 3);
+  else
+    SetPower(OUT_C, 3);
+  SetAnimation(my_animation);
+  PlaySound(my_effect);
+  Wait(200);
+  PlaySound(trill);
+  Wait(200);
+  SetEffectSound(100);
+  PlaySound(beep); Wait(200);
+  SetEffectSound(200);
+  while (true)
+  {
+    PlaySound(beep); Wait(200);
+    SetAnimation(animation2);
+    Wait(500);
+    if (EEPROM(1) < 10) break;
+  }
+}
+

@@ -1,0 +1,26 @@
+program demo {
+  #include<Spybot.h>
+  var x
+  
+  main {
+    local nIndex
+    local i
+    local p
+    p = @x
+    i = 0
+    x = 0x80
+    while i < 10
+    {
+      eeprom[x] = i
+      p^ = x + 1
+    }
+    find world[nIndex,iRange] > cNowhere {
+      eeprom[0xa0] = world[nIndex, iRange]
+      if world[nIndex,iShortID] < cPCID
+      {
+        eeprom[x] = eeprom[x] + 1
+      }
+    }
+  }
+}
+

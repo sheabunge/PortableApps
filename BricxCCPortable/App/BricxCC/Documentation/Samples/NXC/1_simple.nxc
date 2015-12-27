@@ -1,0 +1,15 @@
+task main()
+{
+  OnFwdSync(OUT_AB, 75, 0);
+  Wait(4000);
+  OnRevSync(OUT_AB, 75, 0);
+  Wait(4000);
+  Off(OUT_AB);
+}
+
+
+
+
+
+
+

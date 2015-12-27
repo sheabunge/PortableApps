@@ -1,0 +1,17 @@
+#define LEFT    OUT_C
+#define RIGHT   OUT_A
+#define NORMAL_SPEED 7
+task main()
+{
+        SetPower(RIGHT+LEFT, NORMAL_SPEED);
+        Fwd(LEFT);
+        Fwd(RIGHT);
+        On(RIGHT+LEFT);
+        ClearTimer(1);
+        do {
+        } while (Timer(1) < 100);
+        Off(RIGHT+LEFT);
+        PlaySound(SOUND_UP);
+        PlaySound(SOUND_DOWN);
+}
+

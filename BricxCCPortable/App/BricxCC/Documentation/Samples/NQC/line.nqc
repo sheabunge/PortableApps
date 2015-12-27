@@ -1,0 +1,62 @@
+// Spybotics Line Tracer
+// Copyleft 2002 mac@research.co.jp
+
+#define BUTTON	SENSOR_1
+#define LIGHT	SENSOR_2
+#define RIGHT	OUT_A
+#define LEFT	OUT_B
+#define LAMP	OUT_C
+
+task main()
+{
+	int i;
+	int black, white, th, sens;
+
+	SetLight(LIGHT_ON);
+
+	PlaySound(3);
+	Wait(100);
+
+	while(true) {
+		PlayTone(LIGHT*10,10);
+		Wait(10);
+		if (BUTTON) break;
+	}
+
+	black = 0;
+	for(i = 0; i < 128; i++) {
+		black += LIGHT;
+	}
+	black /= 128;
+
+	PlaySound(3);
+	Wait(100);
+
+	until(!BUTTON);
+	while(true) {
+		PlayTone(LIGHT*10,10);
+		Wait(10);
+		if (BUTTON) break;
+	}
+
+	white = 0;
+	for(i = 0; i < 128; i++) {
+		white += LIGHT;
+	}
+	white /= 128;
+
+	th = (black + white) / 2;
+
+	until(!BUTTON);
+
+	while(true) {
+		if (LIGHT < th) {
+			Off(RIGHT);
+			On(LEFT);
+		}
+		else {
+			Off(LEFT);
+			On(RIGHT);
+		}
+	}
+}

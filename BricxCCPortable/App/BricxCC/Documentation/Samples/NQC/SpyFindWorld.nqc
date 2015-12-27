@@ -1,0 +1,57 @@
+#pragma noinit
+
+task main()
+{
+  int x = 0;
+  int t = -1;
+  int* p = &x;
+  ClearWorld();
+
+//	find	9,45,2,2,3
+//016 find       var[34], 45, 2, 3     d5 22 2d 02 02 03
+//	find	9,45,1,2,2
+//016 find       var[34], 45, 1, 2     d5 22 2d 01 02 02
+
+  FindWorld(t, SPY_RANGE, REL_GT, RANGE_NOWHERE);
+  while (t != -1)
+  {
+    SetWorldNote(t, 40);
+    WorldNote(t) = 40;
+    SetTargetID(t);
+    x = WorldShortID(t);
+    x = WorldRange(t);
+    x = WorldNote(t);
+/*
+    GetWorld(SPY_SHORTID, t, x);
+    GetWorld(SPY_LINKID, t, x);
+    GetWorld(SPY_RANGE, t, x);
+    GetWorld(SPY_DIRECTION, t, x);
+    GetWorld(SPY_ASPECT, t, x);
+    GetWorld(SPY_INFO, t, x);
+    GetWorld(SPY_NOTE, t, x);
+*/
+    FindWorld(t, SPY_RANGE, REL_GT, RANGE_NOWHERE);
+  }
+  
+  SetTargetNote(x);
+  x = Target(SPY_SHORTID);
+  x = Target(SPY_LINKID);
+  x = Target(SPY_RANGE);
+  x = Target(SPY_DIRECTION);
+  x = Target(SPY_ASPECT);
+  x = Target(SPY_INFO);
+  x = Target(SPY_NOTE);
+  
+  int i;
+  x = 0x80;
+  for(i=0; i<10; i++)
+  {
+    EEPROM(x) = i;
+//    x++;
+    *p += 1;
+  }
+  EEPROM(0x81) = 11;
+  i = EEPROM(x);
+
+}
+

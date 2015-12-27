@@ -1,0 +1,56 @@
+/*   HiTechnic Experimenter's Kit for the SuperPro
+
+Experiment - 3 Six LEDs and the Ultrasonic sensor
+
+This program reads the raw value of the sound sensor and outputs a
+digital value to one of six LEDs.
+
+Port 1 - HiTechnic Prototype Board
+Port 4 - Ultrasonic sensor
+
+*/
+
+#define SUPERPRO_PORT IN_1
+#define US_PORT       IN_4
+
+task main()
+{
+  int value;
+  byte OutputBit;
+
+  SetSensorLowspeed(SUPERPRO_PORT); // set sensor port 1 to low speed serial (I2C)
+  SetSensorUltrasonic(US_PORT);
+  Wait(100);
+
+  // Set B0-B5 for output
+  SetSensorHTSuperProDigitalControl(SUPERPRO_PORT, 0x3f);
+
+  while (true) {
+    value = SensorUS(US_PORT);
+
+    switch(value/10) {
+    case 0:
+      OutputBit = 1;
+      break;
+    case 1:
+      OutputBit = 2;
+      break;
+    case 2:
+      OutputBit = 4;
+      break;
+    case 3:
+      OutputBit = 8;
+      break;
+    case 4:
+      OutputBit = 16;
+      break;
+    default:
+      OutputBit = 32;
+      break;
+    }
+    SetSensorHTSuperProDigital(SUPERPRO_PORT, OutputBit);
+    Wait(50);
+  }
+}
+
+

@@ -1,0 +1,132 @@
+program builtin
+{
+	#include<Spybot.h>
+	#include<Globals.h>
+	#include<Events.h>
+	#include<Messages.h>
+
+	const cAdvance = 1
+	const cRetreat = 2
+
+	var nMode = cAdvance
+
+	main
+	{
+
+		priority 3
+
+		ResetMotors
+		ResetEngine
+		nStatus |= cRunBeads
+
+		display ledScan
+		repeat 2
+		{
+			tone 2232 for 10 wait 20
+			tone 1736 for 10 wait 20
+			tone 1202 for 10 wait 35
+
+			tone 1202 for 10 wait 20
+			tone 1736 for 10 wait 20
+			tone 2232 for 10 wait 35
+		}
+		LED[iDisplay] = 0
+
+		ResetMessages
+
+		start cBuiltInPostWatcher
+		start cBuiltInBumpWatcher
+
+		forever
+		{
+			SelectTarget
+			if target[iRange] > cAnywhere
+			{
+				if nMode = cAdvance
+				{
+					if target[iRange] = cThere { sound sndMagnet }
+					Advance_Bead(cHere,100)
+				}
+				else
+				{
+					if target[iRange] = cHere { sound sndRepulse }
+					Retreat_Bead(cHere,100)
+				}
+			}
+			else
+			{
+				BasicMovement_Bead(moveSpinLeft,50)
+				Fx_Bead(fxTwitter,25)
+				RandomMovement_Bead(moveRandomForward,100)
+				FancyMovement_Bead(moveBugForward,1,100)
+				wait 25
+			}
+		}
+	}
+
+
+	watcher cBuiltInPostWatcher monitor PostEvent
+	{
+		priority 1
+
+		if message[iRxChannel] & iRxIR > 0
+		{
+			message[iLock] = cLockIR
+
+			if message[iRxIR,iCommand] = cCommandController
+			{
+				nControllerButton = message[iRxIR,iHiByte]
+				nControllerButton *= 256
+				nControllerButton |= message[iRxIR,iLoByte]
+
+				select nControllerButton
+				{
+					when  cControllerButton1
+					{
+						tone 3401 for 3
+						nMode = cAdvance
+					}
+
+					when  cControllerButton2
+					{
+						Fire_Bead(cCommandFireLaser,fireTypeThereNarrow,-1,0,0,sndFireLaser,50)
+					}
+
+					when  cControllerButton3
+					{
+						tone 2801 for 3
+						nMode = cRetreat
+					}
+				}
+			}
+
+			message[iLock] = cUnlock
+		}
+	}
+
+
+	watcher cBuiltInBumpWatcher monitor BumpEvent
+	{
+		priority 2
+
+		PlaySound_Bead(sndOuch,0)
+		BasicMovement_Bead(moveBackward,50)
+		BasicMovement_Bead(moveSpinRight,50)
+	}
+
+
+	task cPowerUpTask  //called by firmware each time PBrick is turned on
+	{
+		local nLevel = eeprom[eUserLevel]
+
+		LED[iYellowWarn] = 0
+		wait 50
+		if nLevel < 16
+		{
+			nStatus = cRunBeads
+			CountDown_Bead(nLevel,countDirUp,50)
+		}
+		ResetMotors
+		wait 100
+	}
+}

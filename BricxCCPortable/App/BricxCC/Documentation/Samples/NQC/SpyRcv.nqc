@@ -1,0 +1,100 @@
+#pragma reserve 0 24
+#define VLLEvent 1
+#define MessageEvent 2
+
+int* p;
+
+void DebugOut(const int &x)
+{
+  SetLED(LED_MODE_ON, (x & 0x17) | ((x & 8) * 4) | ((x & 32) / 4));
+  SetLED(LED_MODE_YELLOW, (x / 64) & 0x01);
+  SetLED(LED_MODE_VLL, x & 0x80);
+}
+
+task WatchVLL()
+{
+  while (true)
+  {
+    monitor (EVENT_MASK(VLLEvent))
+    {
+      Wait(100);
+    }
+    catch
+    {
+      PlaySound(SOUND_GOT_IT);
+      DebugOut(VLL());  // display VLL code on LEDs
+    }
+  }
+}
+
+task WatchMessage()
+{
+  while (true)
+  {
+    monitor (EVENT_MASK(MessageEvent))
+    {
+      Wait(100);
+    }
+    catch
+    {
+      Disp(ANIMATION_SPARKLE);
+      Wait(50);
+      *p = RxMessage(MSG_IR, MSG_INDEX);
+      p++;
+      *p = RxMessage(MSG_IR, MSG_COMMAND);
+      p++;
+      int y = RxMessage(MSG_IR, MSG_HI_BYTE);
+      *p = y;
+      p++;
+      int z = RxMessage(MSG_IR, MSG_LO_BYTE);
+      *p = z;
+      p++;
+      int x = y * 256 + z;
+      switch(x)
+      {
+        case CONTROLLER_BUTTON2 :
+          PlaySound(SOUND_SHOCKED);
+          Disp(ANIMATION_SPARKLE);
+          break;
+        case CONTROLLER_BUTTON3 :
+          PlaySound(SOUND_HIT_BY_LASER);
+          Disp(ANIMATION_ALARM);
+          break;
+/*
+        default :
+          DebugOut(y);
+          PlaySound(SOUND_CRASH);
+          Disp(ANIMATION_SCAN);
+          break;
+*/
+      }
+    }
+  }
+}
+
+task main()
+{
+  p = 0;
+  PingInterval() = 0;
+//  SetPingInterval(0); // turn off Spybot ping
+
+//  SetSerialChannel(SERIAL_CHANNEL_IR); // IR channel
+//  SetSerialBiPhase(SERIAL_BIPHASE_OFF);
+//  SetSerialChecksum(SERIAL_CHECKSUM_NONE);
+//  SetRxMessageLock(MSG_NONE); // no IR locks
+
+  RCRxChannel() = RC_CHANNEL_2;
+//  SetRCRxChannel(RC_CHANNEL_2); // Receive IR messages on channel 2
+
+  // setup the IR and VLL message events
+  SetEvent(MessageEvent, VLL(), EVENT_TYPE_MSG_RECEIVED);
+  SetEvent(VLLEvent, VLL(), EVENT_TYPE_VLL_MSG_RECEIVED);
+
+  // start our watcher tasks
+  start WatchVLL;
+  start WatchMessage;
+
+  while (true)
+    Wait(100);
+}
+

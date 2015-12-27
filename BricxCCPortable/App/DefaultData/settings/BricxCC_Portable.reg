@@ -1,0 +1,17 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\BricxCC]
+
+[HKEY_CURRENT_USER\Software\BricxCC\3.3]
+
+[HKEY_CURRENT_USER\Software\BricxCC\3.3\General]
+"NXTExplorerPath"="X:\\"
+"DefaultMacroLibrary"="PAL:AppDir\\BricxCC\\bricxcc.mlb"
+"UserDataLocalPath"="PAL:DataDir\\config\\"
+"SymFileLibraryPath"="PAL:DataDir\\config\\sym\\"
+
+[HKEY_CURRENT_USER\Software\BricxCC\3.3\ExtraCompiler]
+"CygwinDir"="x:\\cygwin"
+
+[HKEY_CURRENT_USER\Software\BricxCC\3.3\NXTImageValues]
+"DefaultNXTImageDirectory"="PortableApps.comPictures"

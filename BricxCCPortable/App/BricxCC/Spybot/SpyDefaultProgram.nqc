@@ -1,0 +1,7 @@
+#pragma noinit
+
+task main()
+{
+  StartTask(0);
+}
+

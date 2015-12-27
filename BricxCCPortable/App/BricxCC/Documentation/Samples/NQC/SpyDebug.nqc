@@ -1,0 +1,37 @@
+/*
+#define SetLEDBinary(x) SetLED(LED_MODE_ON, x); \
+                       SetLED(LED_MODE_YELLOW, (x >> 6) & 0x01) ; \
+      if ( x & 0x80) { SetLight(LIGHT_ON); } \
+                           else { SetLight(LIGHT_OFF); }
+
+*/
+
+sub SetLEDBinary(const int &x)
+{
+//  SetLED(LED_MODE_ON, x);
+//  SetLED(LED_MODE_YELLOW, (x >> 6) & 0x01);
+//  SetLED(LED_MODE_VLL, x & 0x80);
+}
+
+void SetLEDBinary2(const int &x)
+{
+  SetLED(LED_MODE_ON, x);
+  SetLED(LED_MODE_YELLOW, (x >> 6) & 0x01);
+  SetLED(LED_MODE_VLL, x & 0x80);
+}
+
+task main()
+{
+    SetPingInterval(0);
+     int i;
+     for (i=0; i < 256; i++)
+     {
+//SetLEDBinary(i);
+//Wait(3);
+SetLEDBinary2(i);
+Wait(3);
+     }
+
+}
+
+

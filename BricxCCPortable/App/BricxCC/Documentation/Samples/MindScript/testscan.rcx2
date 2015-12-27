@@ -1,0 +1,89 @@
+program testScan {
+  #include<SpyBot.h>
+  #include<globals.h>
+
+  var vScanning = 0
+
+  sub xSelectTarget
+  {
+    local nIndex
+    local nPriority
+    local nNewTarget = cNoTarget
+    local nStimulus = cNowhere
+
+    find world[nIndex,iRange] > cNowhere
+    {
+      GetStateValue(nIndex,nPriority)
+      if nPriority > nStimulus
+      {
+         nNewTarget = nIndex
+         nStimulus = nPriority
+      }
+     }
+
+     if nStimulus > cNowhere
+     {
+        target = nNewTarget
+     }
+     else
+     {
+        clear target
+     }
+
+     xUpdateDisplayTarget
+}
+
+sub xUpdateDisplayTarget
+{
+  local nDisplay = 0
+
+  if target <> cNoTarget
+  {
+    if target[iRange] > cAnywhere
+    {
+      select target[iDirection]
+      {
+        when cLeft { nDisplay = cRed1 + cRed2 }
+        when cLeftOfCentre { nDisplay = cRed2 + cRed3 }
+        when cCentre { nDisplay = cRed3 + cGreen3 }
+        when cRightOfCentre { nDisplay = cGreen2 + cGreen3 }
+        when cRight { nDisplay = cGreen1 + cGreen2 }
+      }
+    }
+  }
+
+  if nDisplay <> 0
+  {
+    try
+    {
+       LED[iDisplay] = nDisplay
+       vScanning = 0
+     } abort on fail
+  } 
+  else
+  {
+    if vScanning = 0
+    {
+      try
+      {
+         display ledScan
+         vScanning = 1
+      } abort on fail
+    }
+  }
+}
+
+  main {
+    priority 3
+
+    ResetMotors
+    ResetEngine
+
+    display ledScan
+    vScanning = 1
+
+    forever {
+      xSelectTarget
+    }
+  }
+}

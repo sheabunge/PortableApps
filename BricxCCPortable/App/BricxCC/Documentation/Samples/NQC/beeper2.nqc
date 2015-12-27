@@ -1,0 +1,45 @@
+// make our press count global so we can access it from two tasks
+int PressCount;
+
+#define PressEvent 1 // define a meaningful name for event #1
+
+task PressWatcher()
+{
+  while (true)
+  {
+    monitor (EVENT_MASK(PressEvent))
+    {
+      Wait(100);
+    }
+    catch
+    {
+      PressCount++;
+    }
+  }
+}
+
+task foobar() {
+  // do nothing
+}
+
+task main()
+{
+  // initialize our press count to zero
+  PressCount = 0;
+  // configure our sensor as a touch sensor
+  SetSensor(SENSOR_1,SENSOR_TOUCH);
+
+  // configure the press event
+  SetEvent(PressEvent, SENSOR_1, EVENT_TYPE_PRESSED);
+
+  // start our watcher task
+  start PressWatcher;
+
+  // beep until 6 press events have occurred
+  while (PressCount <= 6)
+  {
+    PlayTone(440, 50);
+    Wait(100);
+  }
+}
+

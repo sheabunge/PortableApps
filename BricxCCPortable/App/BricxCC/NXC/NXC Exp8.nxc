@@ -1,0 +1,41 @@
+/*   HiTechnic Experimenter's Kit Program
+
+Experiment - 8 Temperature Sensor
+
+This program reads the temperature sensor and displays the value.
+
+(c) HiTechnic 2011
+
+*/
+
+#define SUPERPRO_PORT IN_1
+
+#define SET_POINT 25            //reference temperature for compare and set LED status
+                                // change this value (degrees C) to set your reference
+
+
+task main()
+{
+  int value;
+  float temperatureC;
+  
+  SetSensorLowspeed(SUPERPRO_PORT); // set sensor port 1 to low speed serial (I2C)
+  Wait(100);
+
+  // Set B4 for output
+  SetSensorHTSuperProDigitalControl(SUPERPRO_PORT, DIGI_PIN4);
+
+  while (true) {
+    value = SensorHTSuperProAnalog(SUPERPRO_PORT, 0);
+
+    temperatureC = ((value*3300)/1023-600)/10.0;
+    TextOut(0, LCD_LINE1, "Temp:     C");
+    NumOut(6*5, LCD_LINE1, temperatureC);
+    if(temperatureC>SET_POINT) {
+      SetSensorHTSuperProDigital(SUPERPRO_PORT, DIGI_PIN4);
+    } else {
+      SetSensorHTSuperProDigital(SUPERPRO_PORT, 0);
+    }
+    Wait(50);
+  }
+}

@@ -1,0 +1,89 @@
+<html>
+<head>
+<TITLE>BrickTool Documentation</TITLE>
+</head>
+<body background="jchback.jpg">
+<FONT size=+4>BrickTool Documentation</FONT> 
+<P><IMG src="lookrul2.gif"></P>
+
+<pre>
+BrickTool version 1.0 (1.0.3.6, built May 02 2006 13:17:18)
+     Copyright (c) 2006 John Hansen
+Usage: BrickTool [options] [actions]
+Options:
+   /Target=&lt;n&gt;: target can be RCX (0), Cybermaster (1), Scout (2), RCX2 (3), Spy
+Bot (4), Swan (5), MicroScout (6), or NXT (7)
+   /COM=port: specify port name (COMn or usb)
+   /BT: use bluetooth (NXT only)
+   /RPT=&lt;n&gt;: specify remote repeat count
+   /T=&lt;n&gt;: specify transmit timeout value
+   /V: specify verbose mode
+   /X: omit packet header (RCX only)
+   /HEX: use hexidecimal for numeric output
+   /Duration=&lt;n&gt;: specify the tone duration for the playtone action
+NXT Options:
+   /Inbox=&lt;n&gt;: use inbox number n when sending or reading a message
+   /Loop: loop when playing sound files
+   /Relative: reset output position relative
+   /Empty: empty mailbox when reading
+Actions:
+   -run: run current program
+   -pgm=&lt;n&gt;: select program number
+   -datalog | -datalog_full: upload datalog (_full == verbose)
+   -eeprom=&lt;n&gt; | -eeprom_full: upload eeprom block (_full == all blocks)
+   -memory=&lt;n&gt; | -memory_full: upload 128 bytes of memory (_full == all memory)
+   -map: upload memory map
+   -monitor=&lt;n&gt;: monitor IR for n seconds
+   -near : set IR to near mode
+   -far : set IR to far mode
+   -firmware=&lt;filename&gt; : download firmware
+   -firmfast=&lt;filename&gt; : download firmware at quad speed
+   -watch=&lt;HHMM|now&gt; : set RCX time
+   -sleep=&lt;timeout&gt; : set RCX sleep timeout
+   -msg=&lt;number&gt; : send IR message to RCX
+   -raw=&lt;data&gt; : format data as a packet and send to RCX
+   -remote=&lt;value&gt; : send a remote command to RCX
+   -scout=&lt;0|1&gt; : put Scout into normal or power mode
+   -var=&lt;N&gt; : read the value of variable N (0-31)
+   -timer=&lt;N&gt; : read the value of timer N (0-3)
+   -counter=&lt;N&gt; : read the value of timer N (0-2)
+   -msgVal : read the current message
+   -incCounter=&lt;N&gt; : increment counter N
+   -decCounter=&lt;N&gt; : increment counter N
+Actions supported by all bricks:
+   -clear : erase all items on the brick
+   -battery : return the battery level
+   -input=&lt;N&gt; : read input N (0-2, 0-3 for NXT)
+   -output=&lt;N&gt; : read the status of output N (0-2)
+   -mute : stop playing sounds
+   -playtone=&lt;frequency&gt; : play a tone for the specified duration
+NXT Actions:
+   -run=&lt;filename&gt; : run the specified program
+   -runningprogram : return the name of the currently running program
+   -stop : stop the currently running program
+   -playfile=&lt;filename&gt; : play the specified sound file
+   -download=&lt;filename&gt; : download the specified file to the NXT
+   -upload=&lt;filename&gt; : upload the specified file from the NXT
+   -listfiles[=&lt;pattern&gt;] : list the files matching the pattern (or *.*)
+   -listmodules[=&lt;pattern&gt;] : list the modules matching the pattern (or *.*)
+   -delete=&lt;filename&gt; : delete the specified file from the NXT
+   -keepalive : return the current sleep time limit
+   -msg=&lt;string&gt; : send the specified message to the NXT
+   -msgread=&lt;box&gt; : read the message from the specified box
+   -resetoutputposition=&lt;port&gt; : reset the position for the specified port
+   -resetinputsv=&lt;port&gt; : reset the input scaled value for the specified port
+   -setname=&lt;new_name&gt; : set the name of the NXT
+   -getname : return the name of the NXT
+   -versions : return the NXT firmware and protocol versions
+   -deviceinfo : return all NXT device information
+   -freemem : return the amount of free memory
+   -lsstatus=&lt;port&gt; : return the low speed status for the specified port
+   -btnstate=&lt;btn&gt; : return the button state for the specified button
+   -resetbtnstate=&lt;btn&gt; : reset the button state for the specified button
+   -boot : reset the NXT into SAMBA mode (usb only)
+   -btreset : reset the NXT bluetooth to factory settings (usb only)
+General:
+   -help : display command line options
+</pre>
+</body>
+</html>

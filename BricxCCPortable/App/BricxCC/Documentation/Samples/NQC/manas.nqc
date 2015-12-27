@@ -1,0 +1,111 @@
+#define MANAS_1 5
+#define MANAS_2 6
+#define MANAS_3 7
+#define EM_FLOAT 0
+#define EM_OFF 8
+#define EM_FWD 7
+#define EM_REV 15
+
+int em1,em2,em3,em4,em5,em6; //Global motor control locations
+
+// nLinkID = 0-7, where 0 = no link, 7 = pc link, 1-6 = controller link
+// nMyID = 8-255 (minBotID = 8, maxBotID = 255)
+// nInfo = 0-255
+
+__nolist void SendSpyPing(const int &nLinkID, const int &nMyID,
+  const int &nInfo)
+{
+  SetSerialComm(SERIAL_COMM_4800|SERIAL_COMM_76KHZ);
+  SetSerialPacket(SERIAL_PACKET_DEFAULT);
+  SetSerialData(0,0x80+(nLinkID&0x7));
+  SetSerialData(1,nMyID);
+  SetSerialData(2,nInfo);
+  SetSerialData(3,0x100-((0x80+(nLinkID&0x7)+nMyID+nInfo)&0xff));
+  SendSerial(0,4);
+}
+
+
+task main()
+{
+// This demo starts the manas comms task, then loops forever.
+// In the loop, it steps through three control phases setting
+// the motors to off, and then paired forward and reverse.
+
+SendSpyPing(0, 10, 48);
+int p, q, r;
+p = 0;
+q = 10;
+r = 48;
+SendSpyPing(p, q, r);
+SendSpyPing(0, q, r);
+
+start manas;
+
+while (true)
+{
+em1=EM_OFF;
+em2=EM_OFF;
+em3=EM_OFF;
+em4=EM_OFF;
+em5=EM_OFF;
+em6=EM_OFF;
+
+Wait(100);
+
+em1=EM_FWD;
+em2=EM_REV;
+em3=EM_FWD;
+em4=EM_REV;
+em5=EM_FWD;
+em6=EM_REV;
+
+Wait(100);
+
+em1=EM_REV;
+em2=EM_FWD;
+em3=EM_REV;
+em4=EM_FWD;
+em5=EM_REV;
+em6=EM_FWD;
+
+Wait(100);
+
+}
+}
+// The manas task continuously resends the motor settings.
+// When the RCX is halted, this task stops and the manas
+// motors automatically shut off
+
+task manas()
+{
+
+while (true)
+{
+
+// First ensure serial settings are still ok
+SetSerialComm(SERIAL_COMM_4800|SERIAL_COMM_DUTY25|SERIAL_COMM_76KHZ);
+SetSerialPacket(SERIAL_PACKET_DEFAULT);
+
+// Set to low power so we don't run the battery down too quick
+SetTxPower(TX_POWER_LO);
+
+// Set the first unit two message bytes and send them
+SetSerialData(0,MANAS_1*0x10+em1);
+SetSerialData(1,em2*0x10+0x10-((MANAS_1+em1+em2)&0xf));
+SendSerial(0,2);
+
+// Set the second unit two message bytes and send them
+SetSerialData(0,MANAS_2*0x10+em3);
+SetSerialData(1,em4*0x10+0x10-((MANAS_2+em3+em4)&0xf));
+SendSerial(0,2);
+
+// Set the third unit two message bytes and send them
+SetSerialData(0,MANAS_3*0x10+em5);
+SetSerialData(1,em6*0x10+0x10-((MANAS_3+em5+em6)&0xf));
+SendSerial(0,2);
+
+// Delay for a while so we can resend them regularly
+Wait(10);
+}
+}
+

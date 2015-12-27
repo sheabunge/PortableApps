@@ -1,0 +1,277 @@
+/*
+ * #define VLLP1
+ * #include "libvll.nqc"
+ * task main()
+ * {
+ *    vll(MSVLL_D_DEL_SCRIPT);
+ *    vll(MSVLL_S_FWD1);
+ *    vll(MSVLL_S_RWD2);
+ *    vll(MSVLL_D_RUN);
+ * }
+ * 
+ */
+
+#ifndef __VLLDEF
+// Definitions for VLL command table of MicroScout
+#define MSVLL_D_FWD	0		// 0 D: Motor Forward
+#define MSVLL_D_RWD	1		// 1 D: Motor Reverse
+#define MSVLL_D_BEEP1	4		// 4 D: Beep 1
+#define MSVLL_D_BEEP2	5		// 5 D: Beep 2
+#define MSVLL_D_BEEP3	6		// 6 D: Beep 3
+#define MSVLL_D_BEEP4	7		// 7 D: Beep 4
+#define MSVLL_D_BEEP5	8		// 8 D: Beep 5
+#define MSVLL_D_STOP	10		// 10 D: Motor Stop
+#define MSVLL_S_FWD05	16		// 16 S: Motor Forward 0.5
+#define MSVLL_S_FWD1	17		// 17 S: Motor Forward 1.0
+#define MSVLL_S_FWD2	18		// 18 S: Motor Forward 2.0
+#define MSVLL_S_FWD5	19		// 19 S: Motor Forward 5.0
+#define MSVLL_S_RWD05	20		// 20 S: Motor Reverse 0.5
+#define MSVLL_S_RWD1	21		// 21 S: Motor Reverse 1.0
+#define MSVLL_S_RWD2	22		// 22 S: Motor Reverse 2.0
+#define MSVLL_S_RWD5	23		// 23 S: Motor Reverse 5.0
+#define MSVLL_S_BEEP1	24		// 24 S: Beep 1
+#define MSVLL_S_BEEP2	25		// 25 S: Beep 2
+#define MSVLL_S_BEEP3	26		// 26 S: Beep 3
+#define MSVLL_S_BEEP4	27		// 27 S: Beep 4
+#define MSVLL_S_BEEP5	28		// 28 S: Beep 5
+#define MSVLL_S_WAIT4_LIGHT	29	// 29 S: Wait for Light
+#define MSVLL_S_SEEK_LIGHT	30	// 30 S: Seek Light
+#define MSVLL_S_CODE	31		// 31 S: Code
+#define MSVLL_S_KEEP_ALIVE	32	// 32 S: Keep Alive
+#define MSVLL_D_RUN		33	// 33 D: Run
+#define MSVLL_D_DEL_SCRIPT	34	// 34 D: Delete Script
+#define MSVLL_D_NEXT	70		// 70 D: Next
+#define MSVLL_D_RESET	71		// 71 D: Reset
+
+// Definitions for VLL command table of CodePilot
+#define CPVLL_FWD	0		// 0 Motor Forward
+#define CPVLL_REV	1		// 1 Motor Reverse
+#define CPVLL_Valve	4		// 4 Sound (Valve)
+#define CPVLL_Helicopter	5	// 5 Sound (Helicopter)
+#define CPVLL_Truck	6		// 6 Sound (Truck)
+#define CPVLL_Robot	7		// 7 Sound (Robot)
+#define CPVLL_Machine	8		// 8 Sound (Machine)
+#define CPVLL_Mute	9		// 9 Sound Mute
+#define CPVLL_Stop	10		// 10 Motor Stop
+#define CPVLL_MOT_S	11		// 11 Motor & Sound
+#define CPVLL_PTruck	12		// 12 Fixed Prgm Truck
+#define CPVLL_PWheel	13		// 13 Fixed Prgm Wheel Driver
+#define CPVLL_PCrash	14		// 14 Fixed Prgm Crash Buggy
+#define CPVLL_PRobot	15		// 15 Fixed Prgm Robot
+#define CPVLL_TIn	96		// 96 Touch In
+#define CPVLL_TOut	97		// 97 Touch Out
+#define CPVLL_TC	99		// 99 Tone C
+#define CPVLL_TCS	100		// 100 Tone C#
+#define CPVLL_TD	101		// 101 Tone D
+#define CPVLL_TDS	102		// 102 Tone D#
+#define CPVLL_TE	103		// 103 Tone E
+#define CPVLL_TF	104		// 104 Tone F
+#define CPVLL_TFS	105		// 105 Tone F#
+#define CPVLL_TG	106		// 106 Tone G
+#define CPVLL_TGS	107		// 107 Tone G#
+#define CPVLL_TA	108		// 108 Tone A
+#define CPVLL_TAS	109		// 109 Tone A#
+#define CPVLL_TH	110		// 110 Tone H (B)
+#define CPVLL_TCH	111		// 111 Tone C
+#define CPVLL_N0	112		// 112 Number 0
+#define CPVLL_N1	113		// 113 Number 1
+#define CPVLL_N2	114		// 114 Number 2
+#define CPVLL_N3	115		// 115 Number 3
+#define CPVLL_N4	116		// 116 Number 4
+#define CPVLL_N5	117		// 117 Number 5
+#define CPVLL_N6	118		// 118 Number 6
+#define CPVLL_N7	119		// 119 Number 7
+#define CPVLL_N8	120		// 120 Number 8
+#define CPVLL_N9	121		// 121 Number 9
+#define CPVLL_DOT	122		// 122 Decimal dot
+#define CPVLL_Random	123		// 123 Random
+#define CPVLL_Low	124		// 124 Speed/Torque Low (20)
+#define CPVLL_Med	125		// 125 Speed/Torque Med (40)
+#define CPVLL_High	126		// 126 Speed/Torque High (60)
+#define CPVLL_Tacho	127		// 127 Tacho
+
+// Difinitions of VLL timing
+#define VLL_ON0_SENSOR	4
+#define VLL_OFF0_SENSOR	1
+#define VLL_ON1_SENSOR	2
+#define VLL_OFF1_SENSOR	3
+
+#define VLL_ON0_OUT	5
+#define VLL_OFF0_OUT	1
+#define VLL_ON1_OUT	2
+#define VLL_OFF1_OUT	4
+
+int                     _vll_buf, _vll_mask, _vll_temp;
+
+#endif // __VLLDEF
+
+
+#ifdef VLLP1
+#define VLLP		SENSOR_1
+#define VLSEND(x)	_vllsend1()
+#define VLLOBJ(x)	vll_1(int x)
+#define VLLON(x)	SetSensor(VLLP, SENSOR_LIGHT);
+#define VLLOFF(x)	SetSensor(VLLP, SENSOR_TOUCH);
+#define VLLON0		VLL_ON0_SENSOR
+#define VLLOFF0		VLL_OFF0_SENSOR
+#define VLLON1		VLL_ON1_SENSOR
+#define VLLOFF1		VLL_OFF1_SENSOR
+#else
+
+#ifdef VLLP2
+#define VLLP		SENSOR_2
+#define VLLOBJ(x)	vll_2(int x)
+#define VLSEND(x)	_vllsend2()
+#define VLLON(x)	SetSensor(VLLP, SENSOR_LIGHT);
+#define VLLOFF(x)	SetSensor(VLLP, SENSOR_TOUCH);
+#define VLLON0		VLL_ON0_SENSOR
+#define VLLOFF0		VLL_OFF0_SENSOR
+#define VLLON1		VLL_ON1_SENSOR
+#define VLLOFF1		VLL_OFF1_SENSOR
+#else
+
+#ifdef VLLP3
+#define VLLP		SENSOR_3
+#define VLLOBJ(x)	vll_3(int x)
+#define VLSEND(x)	_vllsend3()
+#define VLLON(x)	SetSensor(VLLP, SENSOR_LIGHT);
+#define VLLOFF(x)	SetSensor(VLLP, SENSOR_TOUCH);
+#define VLLON0		VLL_ON0_SENSOR
+#define VLLOFF0		VLL_OFF0_SENSOR
+#define VLLON1		VLL_ON1_SENSOR
+#define VLLOFF1		VLL_OFF1_SENSOR
+#else
+
+#ifdef VLLPA
+#define VLLP		OUT_A
+#define VLLOBJ(x)	vll_a(int x)
+#define VLSEND(x)	_vllsenda()
+#define VLLON(x)	On(VLLP)
+#define VLLOFF(x)	Off(VLLP)
+#define VLLON0		VLL_ON0_OUT
+#define VLLOFF0		VLL_OFF0_OUT
+#define VLLON1		VLL_ON1_OUT
+#define VLLOFF1		VLL_OFF1_OUT
+#else
+
+#ifdef VLLPB
+#define VLLOBJ(x)	vll_b(int x)
+#define VLSEND(x)	_vllsendb()
+#define VLLP		OUT_B
+#define VLLON(x)	On(VLLP)
+#define VLLOFF(x)	Off(VLLP)
+#define VLLON0		VLL_ON0_OUT
+#define VLLOFF0		VLL_OFF0_OUT
+#define VLLON1		VLL_ON1_OUT
+#define VLLOFF1		VLL_OFF1_OUT
+#else
+
+#ifdef VLLPC
+#define VLLP		OUT_C
+#define VLLOBJ(x)	vll_c(int x)
+#define VLSEND(x)	_vllsendc()
+#define VLLON(x)	On(VLLP)
+#define VLLOFF(x)	Off(VLLP)
+#define VLLON0		VLL_ON0_OUT
+#define VLLOFF0		VLL_OFF0_OUT
+#define VLLON1		VLL_ON1_OUT
+#define VLLOFF1		VLL_OFF1_OUT
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+
+
+sub VLSEND()
+{
+   // _vll_buf = (7 - ((_vll_buf / 16) + (_vll_buf / 4) + _vll_buf) & 7) * 256 + (_vll_buf * 2) + 1;
+    _vll_temp = _vll_buf / 4;
+    _vll_mask = _vll_buf / 16 + _vll_temp + _vll_buf;
+    _vll_temp = (((7 - _vll_mask) & 7) * 128 + _vll_buf) * 2 + 1;
+    _vll_buf = _vll_temp;
+
+    _vll_mask = 2048;
+   // send start
+    VLLON();
+    Wait(16);
+   // send data
+    while (_vll_mask != 0) {
+	_vll_temp = _vll_buf & _vll_mask;
+	if (_vll_temp == 0) {
+	    VLLON();
+	    Wait(VLLON0);
+	    VLLOFF();
+	    Wait(VLLOFF0);
+	}
+	else {
+	    VLLON();
+	    Wait(VLLON1);
+	    VLLOFF();
+	    Wait(VLLOFF1);
+	}
+	_vll_mask /= 2;
+    }
+   // send stop
+    Wait(4);
+    VLLON();
+    Wait(30);
+    VLLOFF();
+}
+
+void VLLOBJ(x)
+{
+    _vll_buf = x;
+    VLSEND();
+}
+
+#ifndef __VLLDEF
+void vll(int x)
+{
+    _vll_buf = x;
+    VLSEND();
+}
+
+#define __VLLDEF
+#endif
+
+#ifdef VLLP1
+#undef VLLP1
+#else
+
+#ifdef VLLP2
+#undef VLLP2
+#else
+
+#ifdef VLLP3
+#undef VLLP3
+#else
+
+#ifdef VLLPA
+#undef VLLPA
+#else
+
+#ifdef VLLPB
+#undef VLLPB
+#else
+
+#ifdef VLLPC
+#undef VLLPC
+
+#endif
+#endif
+#endif
+#endif
+#endif
+#endif
+
+#undef VLLP
+#undef VLLOBJ
+#undef VLSEND
+#undef VLLON
+#undef VLLOFF
+#undef VLLON0
+#undef VLLOFF0
+#undef VLLON1
+#undef VLLOFF1

@@ -1,0 +1,371 @@
+<html>
+<head>
+<TITLE>Bricx Command Center 3.3</TITLE>
+</head>
+<body background="jchback.jpg">
+<FONT size=+4>Bricx Command Center 3.3</FONT> 
+<A href="http://sourceforge.net"> <IMG src="http://sourceforge.net/sflogo.php?group_id=68600&amp;type=5" width="210" height="62" border="0" alt="SourceForge Logo"></A>
+<P><IMG src="lookrul2.gif"></P>
+
+<H3>Bricx Command Center 3.3</H3>
+<P><B>Bricx Command Center</B> (BricxCC) is a Windows (95, 98, ME, NT, W2K, XP, Vista) program commonly known as 
+an integrated development environment (IDE) for programming the RCX (all versions), Scout, 
+Cybermaster, and Spybot programmable bricks using Dave Baum's Not Quite C (NQC) language.  And it
+supports programming the Scout, RCX2, and Spybot using The LEGO Company's MindScript(tm) and LASM(tm) 
+languages via the Mindstorms 2.5 SDK.  It supports programming RCX bricks in C, C++, Pascal,
+Forth, and Java using the brickOS, pbForth, and leJOS alternate firmwares.
+BricxCC now also supports programming the new LEGO Mindstorms NXT brick using Not eXactly C (NXC), 
+Next Byte Codes (NBC), and a simple on-brick programming language called NPG.
+</P>
+<P>
+Version 3.3 of BricxCC is an enhanced revision to Mark Overmars' original program.  See his 
+<a href="http://www.cs.uu.nl/people/markov/lego/">web page</a> for
+an overview of the basic functionality upon which this release was built.</P>
+
+<table width="100%">
+<tr>
+<td>
+<H2><img src="nbc/nxt.gif" ALIGN="MIDDLE"/>NXT News</H2>
+</td>
+<td align="right">
+<H3><a href="http://www.amazon.com/exec/obidos/ASIN/0973864974/lejos-20">NXT Power Programming 2nd Edition</a> is available now!</H3></td>
+<td><a href="http://www.amazon.com/exec/obidos/ASIN/0973864974/lejos-20"><img height="125" src="nxtpp_cover.jpg" ALIGN="MIDDLE"></a></td>
+</tr></table>
+
+<ul>
+<H3>Check the <a href="utilities.html">Utilities</a> page for a link to the new Mac OS X and Linux NeXT 
+Tools application and other NXT utilities.</H3>
+
+<H3>Visit the <a href="http://www.mindboards.net">MINDBoards</a> website for information and discussions about
+all generations of LEGO MINDSTORMS.</H3>
+
+<p>Download the 
+<A href="http://sourceforge.net/project/showfiles.php?group_id=68600&package_id=67285">latest version</A>
+or a recent <a href="test_releases/">test release</a> of BricxCC with full support 
+for the new NXT brick!  And download a release of a command line compiler for the Next Byte Codes
+(<a href="nbc/">NBC</a>) programming language which lets you write programs for the NXT brick in 
+a text-based assembly language.</p>
+<p>Check out <b>Not eXactly C</b>!  <a href="nxc/">Not eXactly C</a> (NXC) is a high-level C-like programming 
+language for the NXT programmable brick which is built on top of NBC.  If you get the latest
+release of NBC then you can also program the NXT using NXC.  
+NXC is designed to be very similar to NQC so that learning to use
+this new language should be easy if you already know NQC.
+Version 3.3.7.16 of BricxCC or greater is required if you want to program using NXC.
+You can also find help for the <a target="_blank" href="nbc/nxcdoc/nxcapi/index.html">NXC API</a> functions on the
+NBC page. A compiled help is also available from the NXC Docs page.  There are 
+viewers available for the compiled help format for 
+<a href="http://www.linux.com/news/software/applications/8209-chm-viewers-for-linux">linux</a> and
+<a href="http://chmox.sourceforge.net/">Mac OS X</a>.
+</p>
+<p>To take advantage of multi-dimensional array support and native shift and wait operations
+be sure to download the enhanced <a href="lms_arm_nbcnxc.zip">NBC/NXC firmware</a> and install it on your NXT
+using the Download Firmware tool in BricxCC.  You can also download the enhanced NBC/NXC firmware 
+<a href="lms_arm_nbcnxc_src.zip">source code</a> if you want.
+</p>
+<p>If you are using NBC you need to check out the NBC Debugger from Tamas Sorosy.  Download it
+from <a target="_blank" href="http://www.sorosy.com/lego/nxtdbg/">www.sorosy.com</a>.  You will
+be amazed at how easy it makes debugging your NBC programs.
+</p>
+<p>
+Communication with the NXT requires that the 
+<a href="http://cache.lego.com/upload/contentTemplating/Mindstorms2SupportFilesDownloads/otherfiles/download936C391AD9DAA7CB4AA9A9ADBEED89FB.zip">
+Mindstorms NXT Driver v1.02</a> or newer is installed.  The zip can be found on the 
+<a href="http://mindstorms.lego.com/en-us/support/files/default.aspx#Driver">MINDSTORMS Update</a> page.  If you have any 
+difficulties communicating with your NXT you may not have the Fantom drivers installed 
+properly.  See the <a href="NXTFantomDriverHelp.pdf">NXT Fantom Driver Help</a> document for assistance.
+</p>
+</ul>
+
+<H3>Downloading</H3>
+<P>The most recent version of BricxCC is version 3.3 which uses NQC 2.3r1 or later.  
+<em>NQC version 2.4r1 or <a href="nqc/release/nqc-win-3-1-r6.zip">later</a></em> 
+is required for full USB tower support - 
+downloading programs will not work with earlier versions of NQC.  
+<em>NQC version 2.5a1 or later</em> is required for NQC Spybot support.  
+NQC 3.1r5 is now included
+in the BricxCC distribution so you do not have to download it separately from the new 
+<a href="nqc/">NQC website</a>.</P>
+
+<P>BricxCC <A href="http://sourceforge.net/project/showfiles.php?group_id=68600&package_id=67285">latest version</A>. </P>
+
+<H3>Donations</H3>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post" TARGET="_blank">
+<input type="hidden" name="cmd" value="_xclick">
+<input type="hidden" name="business" value="afanofosc@comcast.net">
+<input type="hidden" name="no_note" value="1">
+<input type="hidden" name="currency_code" value="USD">
+<input type="hidden" name="tax" value="0">
+Support my efforts to enhance BricxCC!  If you love BricxCC as much as I do, why not consider 
+sharing a small token of your appreciation?  I'm now accepting donations via PayPal.
+<br>
+<input type="image" src="https://www.paypal.com/images/x-click-but04.gif" border="0" name="submit" alt="Donate with PayPal">
+</form>
+<p/>
+
+<H3>Installation</H3>
+<P>To install Bricx Command Center, perform the following simple steps:</P>
+<ul>
+<li>Run the Bricxcc setup executable.  Follow the setup wizard instructions.
+If you choose a custom install you can select whether to install the NQC Tutorial
+(written by Mark Overmars with a few minor revisions by John Hansen).  You can 
+also choose whether to install the NQC Compiler.  If you already have NQC installed you 
+may wish to deselect this option.  To enable full support for MindScript and LASM you should
+choose to install the LCC32 command-line compiler (this is installed by default).
+<li>(Optional but recommended) 
+To get the very latest features and support for the newest LEGO programmable bricks
+you should download and extract the <a href="test_release.zip">test release</a> of
+BricxCC.  Make sure the directory structure in the zip is maintained when you extract the files.
+<li>(Optional) To enable WinHelp support under Vista you will need to download and install the Microsoft
+<a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=6EBCFAD9-D3F5-4365-8070-334CD175D4BB&displaylang=en">WinHelp viewer</a>.
+<li>(Optional) Download and extract the latest version of NQC.  The NQC executable (nqc.exe) 
+must be in a directory on your PATH or in the same directory as BricxCC.exe.  The LCC 
+executable (lcc32.exe) must be similarly located.
+<li>(Optional) Download and install the <a href="http://www.philohome.com/sdk25/sdk25.htm">
+LEGO Mindstorms SDK 2.5</a> to enable MindScript and LASM compile and download support for RCX2, Scout, 
+and Spybot bricks.
+<li>(Optional) To enable RCX brickOS C/C++/Pascal support and leJOS Java support you can now download
+an all-in-one <a href="http://prdownloads.sourceforge.net/bricxcc/BricxCCSetupCygwin.exe?download">
+setup executable</a> which installs a small subset of cygwin along with pre-built
+H8 tools.  NOTE: If you get an error when you try to run the installer that it is missing
+BricxCCSetupCygwin.002 that means the download did not complete successfully.  Please try to download it
+again during off-peak hours or using a download manager utility of some sort.  Once you have successfully 
+downloaded and installed the cygwin configuration and H8 compiler tools then 
+install the <a href="http://prdownloads.sourceforge.net/bricxcc/BricxCCbrickOSleJOS.exe?download">
+minimal brickOS and leJOS for BricxCC</a> and you are ready to go (except for leJOS, which still needs to have a 
+separately installed <a href="http://java.sun.com/j2se/downloads.html">Java Developers Kit</a>).
+</ul>
+<h3>Enhancements (in reverse chronological order)</h3>
+<ul>
+
+<li>
+version 3.3.8.9 includes NBC 1.2.1.r4.
+Fixed reported problem with saving to non BMP file types from NXT Screen tool.
+Fixed a problem with the internal compiler when connected via bluetooth.
+HTML help fix (unable to load hhctrl.ocx).
+Added text viewer.
+Added manual loading of symbol file in watch and new watch tools.
+Added hot keys for close comm and find brick.
+Added support for user-defined API functions in code completion.
+Modified firmware download so that it allows more time for brick to boot in SAMBA mode.
+Added symbol file library path and exposed it and UserDataLocalPath in preferences.
+Loading symbol file manually in watch tools.
+AVI movie changes in NXT Screen tool.
+ROPS improvements.
+New variable watch tool classes.
+Variable watching changes.
+More NXT Watch list changes.
+ROPS debug support change.
+Added status messages for compiler download problems.
+Added additional keyboard support to Joystick tool.
+ctrl-click changes in the editor.
+(2011-03-13)
+
+<li>
+version 3.3.8.8 includes NBC 1.2.1.r3.
+HTML help is now the default and in order to use Win32 help a manual registry edit is required.
+Automatic firmware version option is now on by default, as is NXT 2.0 and Enhanced Firmware.
+HTML help for NQC, NBC, and NXC completed.
+Automatic firmware version option also now checks enhanced vs standard firmware.
+Code listing window has goto-line and status bar.
+Added ability to edit the editor expert and the grep search shortcuts.
+Added automatic firmware version number when compiling NBC/NXC code.
+Allow long lines in the code listing window (up to 8192 characters).
+(2010-06-30)
+
+<li>
+Version 3.3.7.20 adds a simple hex viewer for files on the NXT. 
+Adds AVI video capture to the NXT Screen tool. 
+Adds support for \" or \' in NXC and NBC strings to the NBC and NXC syntax highlighters.
+Fixes an access violation when closing the main window while unsaved changes
+exist in open editor windows and you choose "cancel" when prompted to
+save your changes.
+Fixes NXTDeviceInfo function in TSpirit class for the bluetooth address value.
+Fixes broken defragment operation in the NXT Explorer.
+Fixes SendMessage boolean NXT message bug (inverted logic).
+Adds support for custom NXC API syntax highlighting.
+Adds support for a new NBC command-line switch limiting errors to max error count.
+Adds support for new NBC -v=version command line switch for setting NXT firmware 
+version (1.0x vs 1.2x) compatibility.
+Adds duplicate error reduction code to error list.
+Fixs NXT Explorer defragment operation.
+Adds code completion and syntax highlighter support for new NBC/NXC API functions.
+Improves the error list tool at the bottom of the editor window to open other files if
+the error/warning occurs in an included file and show a hint window as you mouse 
+over the errors/warnings.
+Adds support for adjusting line numbers if the Gutter is configured to start
+numbering lines at zero instead of 1 and line numbers are showing.
+Adds a /UserPath command line switch for BricxCC that controls where the nxt.dat 
+file and other user files are stored (e.g., bricxcc /UserPath=d:\)
+Adds pause/single step, NBC/NXC variable watching.
+Adds support for drag-and-drop from NXT Explorer PC list view to BricxCC main window
+to open files.
+Code completion can be made case sensitive or not for NQC, NBC, and NXC.
+User-defined functions are added to code completion list
+Fixes for NBC compiler error reporting.
+Adds internal NBC compiler status update messages.
+Launch Guide and Tutorial PDFs from BricxCC help menu.
+Launch NBC API listing windows from Preferences dialog.
+Fixes bug causing unsaved changes to be lost if you click Cancel when prompted to 
+save changes.
+Adds visual indication of progress while initializing nxt.dat file
+Adds Search option to list of Ports on Find Brick dialog - only applies to NXT brick type
+Adds grep search feature from GExperts (Shift+Alt+S and Ctrl+Alt+R)
+Adds editor experts: block comment/uncomment (Ctrl+Alt+Period/Comma), 
+align lines (Ctrl+Alt+End), previous/next identifier (Ctrl+Alt+Up/Down), and 
+Reverse statements (Ctrl+Alt+Home).
+(2009-10-05)
+
+<li>
+Version 3.3.7.19 fixes some several things that I can't remember any more.  Sorry about that.  It also
+fixes syntax highlighting for a few NBC and NXC API functions.
+(2008-10-19)
+
+<li>
+Version 3.3.7.18 fixes some typo bugs in the NBC/NXC math API functions that were
+accidentally introduced in the previous version.
+(2007-11-26)
+
+<li>
+Version 3.3.7.17 has added more support for the new NXT programmable brick.  
+BricxCC now includes full help for NBC and NXC built into the IDE. It also now has
+a built-in version of the beta 33 NBC compiler which makes downloading via Bluetooth
+many times faster than using the external compiler. It supports RICScript which is
+a programming language for writing NXT pictures (.ric files).
+(2007-11-05)
+
+<li>
+Version 3.3.7.16 has added a huge amount of support for the new NXT programmable brick.  
+BricxCC now supports programming the NXT using the new Not eXactly C programming language 
+and it includes the latest NBC/NXC compiler in the installer.  
+The editor supports syntax highlighting and code completion for the NXC
+language.  Templates have been added for the NXC and NBC languages.  The template window is now 
+a dockable treeview.  Templates may be entered in the editor window via single click, 
+double click, or drag-and-drop as the user prefers.  The new NXT Explorer window provides 
+drag-and-drop copying of files to and from the NXT.  BricxCC now integrates with the NBC 
+Debugger via the Compile menu. Download the NBC Debugger from 
+<a TARGET="_blank" href="http://www.sorosy.com/lego/nxtdbg/">www.sorosy.com</a>.
+(2007-02-08)
+
+<li>
+Version 3.3.7.15 has a revised Find Brick dialog as well as a new menu and toolbar look
+and feel.  It adds preliminary support for the new NXT programmable brick.  
+The Diagnostic tool, the Brick Piano tool, and the MIDI Conversion tool all work with
+the NXT but the remaining tools have yet to be converted.  BricxCC supports programming
+the NXT using the new NeXT Byte Codes language and it includes the latest NBC compiler 
+in the installer.  The editor supports syntax highlighting and code completion for the NBC
+language.  This version also fixes a bug in the serial port communication routines which
+was introduced in the previous release.  Standard
+NXT executables can be decompiled in BricxCC by dragging and dropping them on the BricxCC window
+or by opening the files using the Open dialog.
+(2006-08-17)
+
+<li>
+Version 3.3.7.10 has a revised help system (not complete).  
+It adds support for the new Swan firmware (not complete).
+It now supports tabbed windows in addition to the old MDI mode for editor windows.  
+The customizable Tools menu has been enhanced to allow waiting for the executing program
+to finish and closing/reopening the communication port.
+It now supports XP themes.
+The data analysis dialog lets you add series to the graph which are calculated as a function
+of other series.
+It has additional preference settings for tweaking the firmware download process.
+(2005-10-05)
+
+</ul>
+
+<p>See the <a href="bricxcc_history.htm">History</a> page for additional enhancements found in 
+earlier revisions.</p>
+
+<H3>FAQ</H3>
+<p>See the <a href="faq.html">FAQ</a> page for answers to frequently asked BricxCC questions.</p> 
+
+<H3>Source Code</H3>
+<P>I firmly believe in the power of the Open Source movement.  Because Mark 
+generously made his source code available I've been able to make the enhancements
+that are in BricxCC 3.3.  So I'm similarly sharing my revised BricxCC source code for
+all to benefit thereby.  BricxCC is written in Delphi. It is a rather 
+extensive program so don't start working on it unless you are an 
+experienced Delphi programmer. The source code is distributed under the 
+Mozilla Public Licence.  Since I am actively enhancing BricxCC I'd like to receive
+a copy of any bug fixes or enhancements.</P>
+
+<P>Latest <A href="http://sourceforge.net/project/showfiles.php?group_id=68600&package_id=165536">
+source code</A> release of BricxCC.</P>
+
+<H3>Links</H3>
+<P>Dave Baum's NQC <A href="nqc/">
+<IMG alt="Powered by NQC" border=0 src="nqc/nqc.gif" width=90></A>
+</P>
+<P>Next Byte Codes <A href="nbc/">
+<IMG alt="Powered by NBC" border=0 src="nbc/nbc.jpg" width=90></A>
+</P>
+<P>Not eXactly C <A href="nxc/">
+<IMG alt="Powered by NXC" border=0 src="nxc/nxc.jpg" width=90></A>
+</P>
+<P>Programmable Brick <A href="utilities.html">Utilities</A>
+</P>
+
+<P><IMG src="lookrul2.gif"></P>
+<p>Comment to: 
+<ADDRESS><A href="mailto:bricxcc@comcast.net" subject="Bricx Command Center 3.3">bricxcc@comcast.net</A>
+</ADDRESS>
+</p>
+
+<center>
+<img src=http://counters.honesty.com/cgi-bin/honesty-counter.cgi?df=gen.2398583.00000><br>
+<p>
+<script type="text/javascript"><!--
+google_ad_client = "pub-3594224410123613";
+google_ad_width = 728;
+google_ad_height = 90;
+google_ad_format = "728x90_as";
+google_ad_channel ="";
+google_color_border = "336699";
+google_color_bg = "FFFFFF";
+google_color_link = "0000FF";
+google_color_url = "008000";
+google_color_text = "000000";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</p>
+</center>
+<p>
+<!-- Search Google -->
+<center>
+<form method="get" action="http://www.google.com/custom" target="google_window">
+<table>
+<tr>
+<td nowrap="nowrap" valign="top" align="left" height="32">
+<script type="text/javascript"><!--
+google_ad_client = "pub-3594224410123613";
+google_ad_width = 110;
+google_ad_height = 32;
+google_ad_format = "110x32_as_rimg";
+google_cpa_choice = "CAAQ0ZGazgEaCNfGe9Y_ARDqKPmNxXQ";
+//--></script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</td>
+<td nowrap="nowrap" valign="top" align="left" height="32">
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif" border="0" alt="Google" align="middle"></img></a>
+<input type="text" name="q" size="31" maxlength="255" value="BricxCC"></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="hidden" name="client" value="pub-3594224410123613"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="safe" value="active"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+</td></tr></table>
+</form>
+</center>
+<!-- Search Google -->
+</p>
+
+<p/>
+</body>
+</html>

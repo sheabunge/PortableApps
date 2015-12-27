@@ -1,0 +1,256 @@
+program PostDemo {
+  #include <Spybot.h>
+  #include <Messages.h>
+  var a
+  var b
+  var c
+  var d
+  var q
+  var r
+  var s
+  var t
+  var u
+
+	event VLLEvent when VLL
+  event Post when message
+
+  sub SendSpyMessage(myIndex, nCommand, nHiByte, nLoByte) {
+  	message[iTxType] = cTxTypeSpybot
+//  	message[iTxType] = cTxTypeUser
+  	message[iTxBaud] = cTxBaud4800
+  	message[iTxChannel] = cTxChannelHighPower
+  	message[iUserBiPhase] = cNoBiPhase
+  	message[iUserChecksum] = cNoChecksum
+  	message[iIndex] = myIndex
+  	message[iCommand] = nCommand
+  	message[iHiByte] = nHiByte
+  	message[iLoByte] = nLoByte
+  	send message
+  }
+
+  sub SendRCXMessage(nMessage) {
+  	message[iTxType] = cTxTypeUser
+    message[iTxBaud] = cTxBaud2400
+  	message[iTxChannel] = cTxChannelHighPower
+  	message[iUserBiPhase] = 0x10
+  	message[iUserChecksum] = cSumChecksum
+  	message[iIndex] = 0xf7
+  	message[iCommand] = nMessage
+  	send rcx 2
+  }
+  
+  sub DebugOut(x)
+  {
+    // bits 0-5 on green & red LEDs, green is MSB
+    led[iDisplay] =  (x & 0x17) | ((x & 8) * 4) | ((x & 32) / 4)
+    led[iYellowWarn] = (x / 64) & 1  // bit 6 on yellow LED
+    led[iVLL] =  (x / 128) & 1  // bit 7 on rear red LED
+  }
+
+	sub SendMessage = 34			//SendMessage(nIndex, nCommand, nHiByte, nLoByte)
+
+  main
+  {
+    ping[iInfo] = 0x04
+    wait 200
+    ping[iInterval] = cDisablePings
+    start PostBox
+/*
+    q = 0
+    repeat 10 {
+      r = 0x10 + q
+      s = 0x20 + q
+      t = 0x30 + q
+      u = 0x40 + q
+      a = ping[iMyID]
+      SendSpyMessage(a, a, a, a)
+      wait 20
+      SendSpyMessage(q, 0x40+q, q * 0x10, q)
+      wait 20
+      SendSpyMessage(r, 0x50+q, q * 0x10, r)
+      wait 20
+      SendSpyMessage(s, 0x60+q, q * 0x10, s)
+      wait 20
+      SendSpyMessage(t, 0x70+q, q * 0x10, t)
+      wait 20
+      SendSpyMessage(u, 0x80+q, q * 0x10, u)
+      wait 20
+      SendSpyMessage(q, q, q, q)
+      wait 20
+      u = q*0x10
+      SendSpyMessage(u, u, u, u)
+      wait 20
+    q = q + 1
+    }
+*/
+/*
+    r = 0
+    repeat 20 {
+      s = 0
+      repeat 20 {
+        t = 0
+        repeat 20 {
+          SendSpyMessage(9, r, s, t)
+          wait 10
+          SendSpyMessage(cBroadcast, r, s, t)
+          wait 10
+          SendSpyMessage(cLinkcast, r, s, t)
+          wait 10
+          t = t + 1
+        }
+        s = s + 1
+      }
+      r = r + 1
+    }
+*/
+/*
+    SendSpyMessage(cLinkcast, 0xff, 0xff, 0xff)
+    SendSpyMessage(cBroadcast, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x20, 0xff, 0xff, 0xff)
+    SendMessage(cLinkcast, 0xff, 0xff, 0xff)
+    SendMessage(cBroadcast, 0xff, 0xff, 0xff)
+    SendMessage(0x20, 0xff, 0xff, 0xff)
+
+    SendSpyMessage(cLinkcast, 0xff, 0xff, 0xff)
+    SendSpyMessage(cBroadcast, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x20, 0xff, 0xff, 0xff)
+
+    SendSpyMessage(cLinkcast, cCommandTypeVLL, 0x10, 0x10)
+    SendSpyMessage(cBroadcast, cCommandTypeVLL, 0x10, 0x10)
+    SendSpyMessage(0x20, cCommandTypeVLL, 0x10, 0x10)
+    
+    SendSpyMessage(cLinkcast, 0x40, 0x40, 0x40)
+    SendSpyMessage(cBroadcast, 0x40, 0x40, 0x40)
+    SendSpyMessage(0xbf, 0x40, 0x40, 0x40)
+
+    SendSpyMessage(0x41, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x42, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x43, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x44, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x45, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x46, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x47, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x48, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x49, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x4a, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x4b, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x4c, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x4d, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x4e, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x4f, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x50, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x80, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x81, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x82, 0xff, 0xff, 0xff)
+    SendSpyMessage(0, 0xff, 0xff, 0xff)
+    SendSpyMessage(1, 0xff, 0xff, 0xff)
+    SendSpyMessage(2, 0xff, 0xff, 0xff)
+    SendSpyMessage(3, 0xff, 0xff, 0xff)
+    SendSpyMessage(4, 0xff, 0xff, 0xff)
+    SendSpyMessage(5, 0xff, 0xff, 0xff)
+    SendSpyMessage(6, 0xff, 0xff, 0xff)
+    SendSpyMessage(7, 0xff, 0xff, 0xff)
+    SendSpyMessage(8, 0xff, 0xff, 0xff)
+    SendSpyMessage(9, 0xff, 0xff, 0xff)
+    SendSpyMessage(10, 0xff, 0xff, 0xff)
+    SendSpyMessage(11, 0xff, 0xff, 0xff)
+    SendSpyMessage(12, 0xff, 0xff, 0xff)
+    SendSpyMessage(13, 0xff, 0xff, 0xff)
+    SendSpyMessage(14, 0xff, 0xff, 0xff)
+    SendSpyMessage(15, 0xff, 0xff, 0xff)
+    SendSpyMessage(16, 0xff, 0xff, 0xff)
+    SendSpyMessage(17, 0xff, 0xff, 0xff)
+    SendSpyMessage(18, 0xff, 0xff, 0xff)
+    SendSpyMessage(19, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x20, 0xff, 0xff, 0xff)
+    SendSpyMessage(0x21, 0xff, 0xff, 0xff)
+
+/*
+    q = 0
+    repeat 64 {
+      r = q + 1
+      s = q + 2
+      t = q + 3
+      u = q + 4
+      a = ping[iMyID]
+      SendSpyMessage(a, a, a, a)
+      wait 10
+      SendSpyMessage(cLinkcast, 0x40, 0x40, 0x40)
+      wait 10
+      SendSpyMessage(q, q, q, q)
+      wait 10
+      SendSpyMessage(r, r, r, r)
+      wait 10
+      SendSpyMessage(s, s, s, s)
+      wait 10
+      SendSpyMessage(t, t, t, t)
+      wait 10
+      q = q + 4
+    }
+*/
+  }
+  
+  watcher VLLBox monitor VLLEvent {
+  }
+  
+  watcher PostBox monitor Post {
+    local x
+/*
+    x = message[iIndex] // 0
+    x = message[iCommand] // 1
+//    x = message[iConvertIndex]
+    x = message[iHiByte] // 2
+    x = message[iLoByte] // 3
+
+    x = message[iTxType] // 16
+    x = message[iTxBaud] // 17
+    x = message[iTxChannel] // 18
+    x = message[iUserPreamblePos] // 19
+    x = message[iUserPreambleLen] // 20
+    x = message[iUserChecksum] // 21
+    x = message[iUserBiPhase] // 22
+
+    x = message[iLock] // 23
+    x = message[iFound] // 24
+    x = message[iRxChannel] // 25
+
+    x = message[iRxIR, iConvertIndex] // 26
+    x = message[iRxPC, iConvertIndex] // 27
+
+    x = message[iRxIR, iIndex] // 28
+    x = message[iRxIR, iCommand] // 29
+    x = message[iRxIR, iHiByte] // 30
+    x = message[iRxIR, iLoByte] // 31
+
+    x = message[iRxPC, iIndex] // 32
+    x = message[iRxPC, iCommand] // 33
+    x = message[iRxPC, iHiByte] // 34
+    x = message[iRxPc, iLoByte] // 35
+
+    x = ping[iMyID]
+    ping[iInfo] = x
+*/
+//	set	33,23,2,1
+    sound 1
+    if message[iRxChannel] = iRxPC {
+      message[iLock] = cLockPC
+      a = message[iRxPC,iIndex]
+      b = message[iRxPC,iCommand]
+      c = message[iRxPC,iLoByte]
+      d = message[iRxPC,iHiByte]
+      DebugOut(c)
+      message[iLock] = cUnlock
+    }
+    else {
+      message[iLock] = cLockIR
+      a = message[iRxIR,iIndex]
+      b = message[iRxIR,iCommand]
+      c = message[iRxIR,iLoByte]
+      d = message[iRxIR,iHiByte]
+      SendRCXMessage(c)
+      DebugOut(c)
+      message[iLock] = cUnlock
+    }
+  }
+}
+

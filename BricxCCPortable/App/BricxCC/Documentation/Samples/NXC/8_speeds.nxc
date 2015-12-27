@@ -1,0 +1,28 @@
+int speed, __speed;
+
+task run_motor()
+{
+  while (true)
+  {
+    __speed = speed;
+    if (__speed > 0) {OnFwd(OUT_AB, 75);}
+    if (__speed < 0) {OnRev(OUT_AB, 75); __speed = -__speed;}
+    Wait(__speed*10);
+    Off(OUT_AB);
+  }
+}
+
+task submain()
+{
+  speed = 1;   Wait(2000);
+  speed = -10; Wait(2000);
+  speed = 5;   Wait(2000);
+  speed = -2;  Wait(2000);
+  Off(OUT_AB);
+}
+
+task main()
+{
+  Precedes(run_motor, submain);
+  speed = 0;
+}

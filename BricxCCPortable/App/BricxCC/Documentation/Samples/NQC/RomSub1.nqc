@@ -1,0 +1,122 @@
+#define LocalVar1    0x0a
+#define LocalVar2    0x0b
+#define LocalVar3    0x0c
+#define LocalVar4    0x0d
+#define LocalVar5    0x0e
+#define LocalVar6    0x0f
+#define LocalVar7    0x10
+#define LocalVar8    0x11
+
+#define GlobalVar0   0x00
+#define GlobalVar1   0x01
+#define GlobalVar2   0x02
+#define GlobalVar3   0x03
+#define GlobalVar4   0x04
+#define GlobalVar5   0x05
+#define GlobalVar6   0x06
+#define GlobalVar7   0x07
+#define GlobalVar8   0x08
+#define GlobalVar9   0x09
+
+#define LV_to_GV(lv, gv)         asm {0x14, gv, 0x00, lv, 0x00}
+#define GV_to_LV(gv, lv)         asm {0x14, lv, 0x00, gv, 0x00}
+#define LV_to_LV(lvs, lvt)       asm {0x14, lvt, 0x00, lvs, 0x00}
+#define CONST_to_LV(cnst, lv)    asm {0x14, lv, 0x02, cnst, 0x00}
+
+void MotorDriveSub(const int lvType)
+{
+     CONST_to_LV( lvType, LocalVar1);
+     asm {0x17, 0x03};
+}
+void BasicMotionSub(const int lvType, const int lvTime)
+{
+     CONST_to_LV( lvType, LocalVar1);
+     CONST_to_LV( lvTime, LocalVar2);
+     asm {0x17, 0x04};
+}
+void AvoidSub(const int lvType, const int lvTime)
+{
+     CONST_to_LV( lvType, LocalVar1);
+     CONST_to_LV( lvTime, LocalVar2);
+     asm {0x17, 0x05};
+}
+void MovementSub(const int lvType, const int lvTime)
+{
+     CONST_to_LV( lvType, LocalVar1);
+     CONST_to_LV( lvTime, LocalVar2);
+     asm {0x17, 0x06};
+}
+void GetAverageLightSub()
+{
+     asm {0x17, 0x07};
+}
+void AutoAdjustLightSub(const int lvCenterLight, const int lvThPercent, const int lvHPercent)
+{
+     CONST_to_LV( lvCenterLight, LocalVar1);
+     CONST_to_LV( lvThPercent, LocalVar2);
+     CONST_to_LV( lvHPercent, LocalVar3);
+     asm {0x17, 0x08};
+}
+void SeekSub(const int lvType, const int lvTime)
+{
+     CONST_to_LV( lvType, LocalVar1);
+     CONST_to_LV( lvTime, LocalVar2);
+     asm {0x17, 0x09};
+}
+void FindBrightSub(const int lvBrightTH, const int lvBrightSteps)
+{
+     CONST_to_LV( lvBrightTH, LocalVar1);
+     CONST_to_LV( lvBrightSteps, LocalVar2);
+     asm {0x17, 0x0a};
+}
+void GetMotorStatusSub()
+{
+     asm {0x17, 0x0b};
+}
+void Motor2SoundSub(const int lvStatusA, const int lvStatusB)
+{
+     CONST_to_LV( lvStatusA, LocalVar1);
+     CONST_to_LV( lvStatusB, LocalVar2);
+     asm {0x17, 0x0c};
+}
+void LightGeigerSub(const int lvIntgLimit)
+{
+     CONST_to_LV( lvIntgLimit, LocalVar1);
+     asm {0x17, 0x0d};
+}
+void FwdSub(const int lvDuration, const int lvTaskFlags)
+{
+     CONST_to_LV( lvDuration, LocalVar1);
+     CONST_to_LV( lvTaskFlags, LocalVar8);
+     asm {0x17, 0x0e};
+}
+void RwdSub(const int lvDuration, const int lvTaskFlags)
+{
+     CONST_to_LV( lvDuration, LocalVar1);
+     CONST_to_LV( lvTaskFlags, LocalVar8);
+     asm {0x17, 0x0f};
+}
+void SpinRightSub(const int lvDuration, const int lvTaskFlags)
+{
+     CONST_to_LV( lvDuration, LocalVar1);
+     CONST_to_LV( lvTaskFlags, LocalVar8);
+     asm {0x17, 0x10};
+}
+void SpinLeftSub(const int lvDuration, const int lvTaskFlags)
+{
+     CONST_to_LV( lvDuration, LocalVar1);
+     CONST_to_LV( lvTaskFlags, LocalVar8);
+     asm {0x17, 0x11};
+}
+
+int GV1, GV2;
+
+task main()
+{
+     FwdSub(100,1);
+     RwdSub(100,1);
+     SpinRightSub(100,1);
+     SpinLeftSub(100,1);
+}
+
+

@@ -1,0 +1,46 @@
+program FindDemo {
+  #include "Spybot.h"
+  var nIndex
+  var nControllers
+  
+  main {
+    local p
+
+      nControllers = 0
+      nIndex = -1
+
+      p = 3
+      repeat 7
+      {
+        p^ = 0
+        p += 1
+      }
+      p = 3
+      
+      clear world
+      wait 200
+
+      find world[nIndex,iRange] = cAnywhere {
+        target = nIndex
+        if target[iShortID] = 11
+        {
+          p^ = nIndex
+          p += 1
+          p^ = target[iLinkID]
+          p += 1
+          p^ = target[iRange]
+          p += 1
+          p^ = target[iDirection]
+          p += 1
+          p^ = target[iAspect]
+          p += 1
+          p^ = target[iInfo]
+          p += 1
+          p^ = target[iShortID]
+          p += 1
+        }
+      }
+  }
+}
+
+

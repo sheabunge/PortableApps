@@ -1,0 +1,128 @@
+#pragma noinit
+#pragma reserve 9
+
+#define vScanning @(9)
+
+//int vScanning = 0;
+
+sub sInitGame() {}
+sub sGetDisplay() {}
+sub sPollGameWatcher() {}
+sub sPollStateWatcher() {}
+sub sInitState() {}
+sub sProcessControllerMessage() {}
+sub sProcessVLLMessage() {}
+sub sProcessBotMessage() {}
+sub sUpdateMetabolism() {}
+sub sExtension() {}
+sub sGetPoints() {}
+sub sSpecialAbility() {}
+sub sBumpAction() {}
+
+sub xSelectTarget()
+{
+  int nIndex = 0;
+  int nPriority = 0;
+  int nNewTarget = TARGET_NONE;
+  int nStimulus = RANGE_NOWHERE;
+
+  nIndex = -1;
+  FindWorld(nIndex, SPY_RANGE, REL_GT, RANGE_NOWHERE);
+  while (nIndex != -1)
+  {
+    nPriority = WorldRange(nIndex);
+    if (nPriority > nStimulus)
+    {
+       nNewTarget = nIndex;
+       nStimulus = nPriority;
+    }
+    FindWorld(nIndex, SPY_RANGE, REL_GT, RANGE_NOWHERE);
+  }
+
+  if (nStimulus > RANGE_NOWHERE)
+  {
+    SetTargetID(nNewTarget);
+  }
+  else
+  {
+    SetTargetID(-1);
+  }
+
+  xUpdateDisplayTarget();
+}
+
+sub xUpdateDisplayTarget()
+{
+  int nDisplay = 0;
+
+  if (Target(SPY_TARGETID) != TARGET_NONE)
+  {
+    if (Target(SPY_RANGE) > RANGE_ANYWHERE)
+    {
+      switch (Target(SPY_DIRECTION))
+      {
+        case DIRECTION_LEFT:
+          nDisplay = LED_RED1 + LED_RED2;
+          break;
+        case DIRECTION_LEFT_OF_CENTER:
+          nDisplay = LED_RED2 + LED_RED3;
+          break;
+        case DIRECTION_CENTER:
+          nDisplay = LED_RED3 + LED_GREEN3;
+          break;
+        case DIRECTION_RIGHT_OF_CENTER:
+          nDisplay = LED_GREEN2 + LED_GREEN3;
+          break;
+        case DIRECTION_RIGHT:
+          nDisplay = LED_GREEN1 + LED_GREEN2;
+          break;
+      }
+    }
+  }
+
+  if (nDisplay != 0)
+  {
+    acquire(ACQUIRE_LED)
+    {
+      SetLED(LED_MODE_ON, nDisplay);
+      vScanning = 0;
+    }
+  }
+  else
+  {
+    if (vScanning == 0)
+    {
+       SetAnimation(ANIMATION_SCAN);
+       vScanning = 1;
+    }
+  }
+}
+
+void Call(const int n)		{ asm { 0x17, n }; }
+
+#define ResetMotors 13
+#define ResetEngine 11
+
+task main()
+{
+  // default spybot initialization code
+  SetSensorMode(SENSOR_1, SENSOR_MODE_BOOL);
+  SetSensorMode(SENSOR_2, SENSOR_MODE_PERCENT);
+
+  // global variable initialization
+  vScanning = 0;
+
+  // start of program code
+  SetPriority(2);
+
+  Call(ResetMotors);
+  Call(ResetEngine);
+
+  SetAnimation(ANIMATION_SCAN);
+  vScanning = 1;
+
+  while(true)
+  {
+    xSelectTarget();
+  }
+}

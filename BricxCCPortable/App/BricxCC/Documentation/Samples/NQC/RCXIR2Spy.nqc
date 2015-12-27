@@ -1,0 +1,165 @@
+#define EVENT_1 0
+#define EVENT_2 1
+#define EVENT_3 2
+
+__nolist void SendSpyPing(const int &nLinkID, const int &nMyID,
+  const int &nInfo)
+{
+  int tmp = 0x80+(nLinkID&0x7);
+  SetSerialComm(SERIAL_COMM_4800|SERIAL_COMM_76KHZ);
+  SetSerialPacket(SERIAL_PACKET_DEFAULT);
+  SetSerialData(0,tmp);
+  SetSerialData(1,nMyID);
+  SetSerialData(2,nInfo);
+  SetSerialData(3,0x100-((tmp+nMyID+nInfo)&0xff));
+  SendSerial(0,4);
+}
+
+__nolist void SendSpyMessage(const int &nMode, const int &nMyID,
+  const int &nAddress, const int &nCmd, const int &nHiByte, const int &nLoByte)
+{
+  SetSerialComm(SERIAL_COMM_4800|SERIAL_COMM_76KHZ);
+  SetSerialPacket(SERIAL_PACKET_DEFAULT);
+  SetSerialData(0,nMode);
+  SetSerialData(1,nMyID);
+  SetSerialData(2,nAddress);
+  SetSerialData(3,nCmd);
+  SetSerialData(4,nHiByte);
+  SetSerialData(5,nLoByte);
+  SetSerialData(6,0x100-((nMode+nMyID+nAddress+nCmd+nHiByte+nLoByte)&0xff));
+  SendSerial(0,7);
+}
+
+task main()
+{
+  SetSerialComm(SERIAL_COMM_4800|SERIAL_COMM_76KHZ);
+//  SetSerialComm(SERIAL_COMM_4800|SERIAL_COMM_DUTY25|SERIAL_COMM_76KHZ);
+  SetSerialPacket(SERIAL_PACKET_DEFAULT);
+
+  SetSensor(SENSOR_1, SENSOR_TOUCH);
+  SetSensor(SENSOR_2, SENSOR_TOUCH);
+  SetSensor(SENSOR_3, SENSOR_TOUCH);
+
+  SetEvent(EVENT_1, SENSOR_1, EVENT_TYPE_PRESSED);
+  SetEvent(EVENT_2, SENSOR_2, EVENT_TYPE_PRESSED);
+  SetEvent(EVENT_3, SENSOR_3, EVENT_TYPE_PRESSED);
+
+  int i;
+  i = 0xd8;
+  int j = 1;
+  SendSpyPing(j, i, 0x04);
+  SendSpyMessage(0x89, 0xd8, 0x39, 0x40, 0x10, 0x40);
+/*
+  SetSerialData(0,0x8a); // broadcast
+  SetSerialData(1,0xd8); // my ID
+  SetSerialData(2,0x04); // my ping info
+  SetSerialData(3,0x40); // command byte
+  SetSerialData(4,0x40); // hi byte
+  SetSerialData(5,0x40); // lo byte
+  SetSerialData(6,0xda); // checksum
+  SendSerial(0,7);
+*/
+/*
+  for (i = 0; i < 4; i++)
+  {
+    SetSerialData(0,0x80 + 1); // broadcast
+    SetSerialData(1,0x40); // command
+    SetSerialData(2,0x10 + i);
+    SetSerialData(3,0x20 + i);
+    SendSerial(0,4);
+    Wait(300);
+  }
+*/
+/*
+Operating Mode
+
+01CCRRRR LLLLSSSS Motor drive buttons (repeats when buttons held down)
+10010CCC 0010SSSS Fire button (once when button pressed)
+00CC0001 0001SSSS Fire button (repeats when button held down)
+
+Setup Mode
+
+10010CCC 1111SSSS Channel assignment (lower right button)
+
+Ping Mode
+
+10010CCC 0000SSSS Ping (repeats continuously)
+10010CCC 0001SSSS Upper left button (once when button pressed)
+10010CCC 0010SSSS Fire button (once when button pressed)
+10010CCC 0011SSSS Upper right button (once when button pressed)
+10010CCC 0100SSSS Lower left button (once when button pressed)
+10010CCC 0101SSSS Lower right button (once when button pressed)
+
+Legend
+
+    CC = Channel number (1 to 3)
+   CCC = Channel number (1 to 6)
+  SSSS = Checksum (chosen so sum of all nibbles is zero)
+  RRRR = Right motor buttons
+           0000 - No button pressed
+           0111 - Foward pressed (upper right button)
+           1111 - Reverse pressed (lower right button)
+  LLLL = Left motor buttons
+           0000 - No button pressed
+           0111 - Foward pressed (upper left button)
+           1111 - Reverse pressed (lower left button)
+
+              CHANNEL
+Btn     0      1      2      3
+1    0x4075 0x5074 0x6073 0x7072
+2    0x9025 0x9124 0x9223 0x9322
+3    0x4705 0x5704 0x6703 0x7702
+4    0x40fd 0x50fc 0x60fb 0x70fa
+5    0x5f0d 0x5f0c 0x6f0b 0x7f0a
+3/4  0x47f6 0x57f5 0x67f4 0x77f3
+1/5  0x4f76 0x5f75 0x6f74 0x7f73
+1/3  0x477e 0x577d 0x677c 0x777b
+4/5  0x4ffe 0x5ffd 0x6ffc 0x7ffb
+
+*/
+//1001 0010 0010 0011
+    SetSerialData(0,0x92);
+    SetSerialData(1,0x00);
+    SendSerial(0,2);
+    Wait(500);
+//0110 0000 0111 0011
+    SetSerialData(0,0x60);
+    SetSerialData(1,0x73);
+    SendSerial(0,2);
+    Wait(500);
+//1001 0010 1010 1011
+    SetSerialData(0,0x92);
+    SetSerialData(1,0xab);
+    SendSerial(0,2);
+    Wait(500);
+  while (true)
+  {
+    monitor (EVENT_MASK(EVENT_1) + EVENT_MASK(EVENT_2) +
+                  EVENT_MASK(EVENT_3))
+    {
+      Wait(100);
+    }
+    catch (EVENT_MASK(EVENT_1))
+    {
+      // Same as SpyBot controller red button (channel 2)
+      SetSerialData(0,0x92);
+      SetSerialData(1,0x23);
+      SendSerial(0,2);
+    }
+    catch (EVENT_MASK(EVENT_2))
+    {
+      // Send "non-standard" SpyBot message (channel 2)
+      SetSerialData(0,0x92);
+      SetSerialData(1,0xab);
+      SendSerial(0,2);
+    }
+    catch (EVENT_MASK(EVENT_3))
+    {
+      // Same as SpyBot controller left-forward button (channel 2)
+      SetSerialData(0,0x60);
+      SetSerialData(1,0x73);
+      SendSerial(0,2);
+    }
+  }
+}
+

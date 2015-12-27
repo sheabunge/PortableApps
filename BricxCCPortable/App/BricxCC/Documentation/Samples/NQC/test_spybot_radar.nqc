@@ -1,0 +1,42 @@
+#pragma reserve 3 10
+#define targetid (@3)
+#define linkid (@4)
+#define range (@5)
+#define direction (@6)
+#define aspect (@7)
+#define info (@8)
+#define shortid (@9)
+#define current_id (@10)
+#define Sparkle(n) SetAnimation(ANIMATION_SPARKLE); Wait(50); \
+  SetAnimation(ANIMATION_SCAN); PlaySound(n);
+
+task main() {
+  SetEvent(1, VLL(), EVENT_TYPE_ENTRY_FOUND);
+  SetEvent(2, VLL(), EVENT_TYPE_ENTRY_CHANGED);
+  SetAnimation(ANIMATION_SCAN);
+  ClearWorld();
+  while (true) {
+    monitor (EVENT_MASK(1) | EVENT_MASK(2)) {
+      while (true) { Wait(100); } // do nothing
+    }
+    catch {
+      if (CurrentEvents() & EVENT_MASK(1)) {
+        Sparkle(1);
+        current_id = -1;
+        FindWorld(current_id, SPY_SHORTID, REL_GT, 10);
+//        FindWorld(current_id, SPY_RANGE, REL_EQ, RANGE_NOWHERE);
+        SetTargetID(current_id); // start tracking
+      } else {
+        Sparkle(0);
+        targetid = Target(SPY_TARGETID); // same as current_id
+        linkid = Target(SPY_LINKID);
+        range = Target(SPY_RANGE);
+        direction = Target(SPY_DIRECTION);
+        aspect = Target(SPY_ASPECT);
+        info = Target(SPY_INFO);
+        shortid = Target(SPY_SHORTID);
+      } // if
+    } // catch
+  } // while
+} // task
+

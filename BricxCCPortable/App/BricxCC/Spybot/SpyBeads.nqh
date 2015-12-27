@@ -1,0 +1,307 @@
+#if defined(__SPY)
+
+#ifndef __SPY_BEADS
+#define __SPY_BEADS
+// bead subroutines
+
+#ifndef nState
+  #pragma reserve 29
+  #define nState (@29)
+  #define STATE_GAMEOVER -1
+  #define STATE_OUTOFGAME -2
+  #define STATE_START 0
+#endif
+#ifndef nSpeed
+  #pragma reserve 24
+  #define nSpeed (@24)
+  #define SPEED_FAST 3
+  #define SPEED_NORMAL 2
+  #define SPEED_SLOW 1
+#endif
+#ifndef nStatus
+  #pragma reserve 23
+  #define nStatus (@23)
+#endif
+#ifndef nEvents
+  #pragma reserve 22
+  #define nEvents (@22)
+  #define EVENT_MAINTASKBEAD 0x0001
+  #define EVENT_BUMPTASKBEAD 0x0002
+  #define EVENT_STATETASKBEAD 0x0004
+  #define EVENT_CONTROLLERTASKBEAD 0x0008
+  #define EVENT_TICK 0x0010
+  #define EVENT_WORLD 0x0020
+  #define EVENT_TARGET 0x0040
+  #define EVENT_POST 0x0080
+  #define EVENT_LOCKTARGET 0x0100
+  #define EVENT_RUNBEADS 0x0200
+  #define EVENT_EXTSTATEVALUE 0x0400
+  #define EVENT_EVENTSOUNDS 0x0800
+  #define EVENT_BUMP 0x1000
+  #define EVENT_BLINK 0x2000
+  #define EVENT_DISPLAYACTION 0x4000
+  #define EVENT_SUSPENDSTATEBEADS 0x8000
+  #define WORLD_EVENTS_MASK 0x0060
+  #define MAX_STOP_STATEBEAD_RETRIES 500
+#endif
+#ifndef nAlert
+  #pragma reserve 12
+  #define nAlert (@12)
+#endif
+#ifndef nDisplayMode
+  #pragma reserve 11
+  #define nDisplayMode (@11)
+  #define DISPLAY_STATE 0x01
+  #define DISPLAY_RANDOM 0x02
+  #define DISPLAY_NOTHING 0x03
+  #define DISPLAY_ONEVAR 0x11
+  #define DISPLAY_TWOVAR 0x12
+  #define DISPLAY_GAMETIMEREMAINING 0x13
+  #define DISPLAY_RADAR 0x21
+  #define DISPLAY_PROXIMITY 0x22
+  #define DISPLAY_ANIMATION 0x30
+#endif
+
+//opto sensor calibration
+#ifndef nCalibratedLight
+  #pragma reserve 21
+  #define nCalibratedLight (@21)
+#endif
+
+
+__nolist void EnterBead() { asm { 0x17, 40 }; }
+__nolist void ExitBead() { asm { 0x17, 41 }; }
+
+__nolist void Action_Bead(const int &nSound, const int &nDisplay,
+  const int &nMovement, const int &nRepeat, const int &nTime)
+{ asm { 0xe3, $nSound, 0xe3, $nDisplay, 0xe3, $nMovement,
+        0xe3, $nRepeat, 0xe3, $nTime, 0x17, 64, 0x01, 5 }; }
+
+__nolist void AdjustBlink_Bead(const int &nLight, const int &nThreshPct,
+  const int &nHyst, const int &nTime)
+{ asm { 0xe3, $nLight, 0xe3, $nThreshPct, 0xe3, $nHyst,
+        0xe3, $nTime, 0x17, 79, 0x01, 4 }; }
+
+__nolist void AdjustSounds_Bead(const int &nFreqPct, const int &nTimePct)
+{ asm { 0xe3, $nFreqPct, 0xe3, $nTimePct, 0x17, 104, 0x01, 2 }; }
+
+__nolist void Advance_Bead(const int &nExitZone, const int &nTimes)
+{ asm { 0xe3, $nExitZone, 0xe3, $nTimes, 0x17, 84, 0x01, 2 }; }
+
+__nolist void Alarm_Bead(const int &nSound, const int &nYellowWarn,
+  const int &nBlinkRate)
+{ asm { 0xe3, $nSound, 0xe3, $nYellowWarn, 0xe3, $nBlinkRate, 0x17, 92, 0x01, 3 }; }
+
+__nolist void Alert_Bead(const int &nSndAlert, const int &nTime,
+  const int &nBlinkRate)
+{ asm { 0xe3, $nSndAlert, 0xe3, $nTime, 0xe3, $nBlinkRate, 0x17, 90, 0x01, 3 }; }
+
+__nolist void BasicMovement_Bead(const int &move, const int &time)
+{ asm { 0xe3, $move, 0xe3, $time, 0x17, 87, 0x01, 2 }; }
+
+__nolist void BoostToken_Bead(const int &nTokenIdx, const int &nMax,
+  const int &pVar, const int &nBoost, const int &nSound)
+{ asm { 0xe3, $nTokenIdx, 0xe3, $nMax, 0xe3, $pVar,
+        0xe3, $nBoost, 0xe3, $nSound, 0x17, 74, 0x01, 5 }; }
+
+__nolist void Bump_Bead(const int &nTime)
+{ asm { 0xe3, $nTime, 0x17, 100, 0x01, 1 }; }
+
+__nolist void CalibrateLight_Bead(const int &nSamples)
+{ asm { 0xe3, $nSamples, 0x17, 78, 0x01, 1 }; }
+
+__nolist void CountDown_Bead(const int &nCount, const int &nDir,
+  const int &nStep)
+{ asm { 0xe3, $nCount, 0xe3, $nDir, 0xe3, $nStep, 0x17, 97, 0x01, 3 }; }
+
+#define COUNT_DIR_DOWN 0
+#define COUNT_DIR_UP 1
+
+__nolist void DeactivateToken_Bead(const int &nTokenType)
+{ asm { 0xe3, $nTokenType, 0x17, 99, 0x01, 1 }; }
+
+__nolist void Display_Bead(const int &nDisplay, const int &nTime)
+{ asm { 0xe3, $nDisplay, 0xe3, $nTime, 0x17, 96, 0x01, 2 }; }
+
+__nolist void DisplayFor_Bead(const int &nDisplay, const int &nTicks)
+{ asm { 0xe3, $nDisplay, 0xe3, $nTicks, 0x17, 106, 0x01, 2 }; }
+
+__nolist void FancyMovement_Bead(const int &move, const int &reps,
+  const int &time)
+{ asm { 0xe3, $move, 0xe3, $reps, 0xe3, $time, 0x17, 109, 0x01, 3 }; }
+
+__nolist void Fire_Bead(const int &nMsg, const int &nFT, const int &pVar,
+  const int &nCost, const int &nStr, const int &nSnd, const int &nWait)
+{ asm { 0xe3, $nMsg, 0xe3, $nFT, 0xe3, $pVar, 0xe3, $nCost, 0xe3, $nStr,
+        0xe3, $nSnd, 0xe3, $nWait, 0x17, 77, 0x01, 7 }; }
+
+#define FIRE_TYPE_ANYWHERE 0
+#define FIRE_TYPE_THERE_WIDE 1
+#define FIRE_TYPE_THERE_NARROW 2
+#define FIRE_TYPE_HERE_WIDE 3
+#define FIRE_TYPE_HERE_NARROW 4
+
+__nolist void Fx_Bead(const int &nFx, const int &nTimes)
+{ asm { 0xe3, $nFx, 0xe3, $nTimes, 0x17, 68, 0x01, 2 }; }
+
+#define FX_SHUDDER 0
+#define FX_SHOCKED 1
+#define FX_FIREATBOT 2
+#define FX_TWITTER 3
+
+__nolist void GameResult_Bead(const int &nPingGameResult)
+{ asm { 0xe3, $nPingGameResult, 0x17, 67, 0x01, 1 }; }
+
+__nolist void GetBehind_Bead(const int &nExitZone, const int &nTimes)
+{ asm { 0xe3, $nExitZone, 0xe3, $nTimes, 0x17, 86, 0x01, 2 }; }
+
+__nolist void Goto_Bead(const int &nNewState)
+{ asm { 0xe3, $nNewState, 0x17, 65, 0x01, 1 }; }
+
+__nolist void LED_Bead(const int &nLED, const int &nBlink,
+  const int &nInterval, const int &nTime)
+{ asm { 0xe3, $nLED, 0xe3, $nBlink, 0xe3, $nInterval,
+        0xe3, $nTime, 0x17, 95, 0x01, 4 }; }
+
+__nolist void MemOp_Bead(const int &nMem, const int &nOp, const int &nValue)
+{ asm { 0xe3, $nMem, 0xe3, $nOp, 0xe3, $nValue, 0x17, 70, 0x01, 3 }; }
+
+#define MEM_SET 0
+#define MEM_INC 1
+#define MEM_DEC 2
+#define MEM_MUL 3
+#define MEM_DIV 4
+#define MEM_RND 5
+
+__nolist void MotorTick_Bead(const int &pVar, const int &nStep,
+  const int &nMotorOnThreshold)
+{ asm { 0xe3, $pVar, 0xe3, $nStep, 0xe3, $nMotorOnThreshold, 0x17, 71, 0x01, 3 }; }
+
+__nolist void OutOfGame_Bead() { asm { 0x17, 76 }; }
+
+__nolist void PlayLongTone_Bead(const int &nTone)
+{ asm { 0xe3, $nTone, 0x17, 105, 0x01, 1 }; }
+
+__nolist void PlaySound_Bead(const int &nSound, const int &nTime)
+{ asm { 0xe3, $nSound, 0xe3, $nTime, 0x17, 94, 0x01, 2 }; }
+
+__nolist void PlaySounds_Bead(const int &nSound1, const int &nTime1,
+  const int &nSound2, const int &nTime2, const int &nSound3, const int &nTime3)
+{ asm { 0xe3, $nSound1, 0xe3, $nTime1, 0xe3, $nSound2, 0xe3, $nTime2,
+        0xe3, $nSound3, 0xe3, $nTime3, 0x17, 102, 0x01, 6 }; }
+
+__nolist void PlayTone_Bead(const int &nTone)
+{ asm { 0xe3, $nTone, 0x17, 93, 0x01, 1 }; }
+
+__nolist void PointTo_Bead(const int &nTimes)
+{ asm { 0xe3, $nTimes, 0x17, 82, 0x01, 1 }; }
+
+__nolist void PointToLight_Bead(const int &nSeek, const int &nTime)
+{ asm { 0xe3, $nSeek, 0xe3, $nTime, 0x17, 80, 0x01, 2 }; }
+
+#define SEEK_DARK 0
+#define SEEK_BRIGHT 1
+
+__nolist void PointToward_Bead(const int &nTimes)
+{ asm { 0xe3, $nTimes, 0x17, 81, 0x01, 1 }; }
+
+__nolist void RandomMovement_Bead(const int &move, const int &time)
+{ asm { 0xe3, $move, 0xe3, $time, 0x17, 108, 0x01, 2 }; }
+
+__nolist void RestTick_Bead(const int &pVar, const int &nStep)
+{ asm { 0xe3, $pVar, 0xe3, $nStep, 0x17, 72, 0x01, 2 }; }
+
+__nolist void Retreat_Bead(const int &nRetreatZone, const int &nTimes)
+{ asm { 0xe3, $nRetreatZone, 0xe3, $nTimes, 0x17, 85, 0x01, 2 }; }
+
+__nolist void Send_Bead(const int &nTarget, const int &nMsg, const int &nHiByte, const int &nLoByte)
+{ asm { 0xe3, $nTarget, 0xe3, $nMsg, 0xe3, $nHiByte,
+        0xe3, $nLoByte, 0x17, 66, 0x01, 4 }; }
+
+__nolist void SendAbility_Bead(const int &nStrength)
+{ asm { 0xe3, $nStrength, 0x17, 103, 0x01, 1 }; }
+
+__nolist void SendAllRangeToken_Bead(const int &nTokenIndex, const int &nMax,
+  const int &nMsg, const int &nStrength, const int &nSound)
+{ asm { 0xe3, $nTokenIndex, 0xe3, $nMax, 0xe3, $nMsg, 0xe3, $nStrength,
+        0xe3, $nSound, 0x17, 98, 0x01, 5 }; }
+
+__nolist void SendID_Bead(const int &nShortID, const int &nMsg,
+  const int &nHiByte, const int &nLoByte)
+{ asm { 0xe3, $nShortID, 0xe3, $nMsg, 0xe3, $nHiByte,
+        0xe3, $nLoByte, 0x17, 107, 0x01, 4 }; }
+
+__nolist void SendRCX_Bead(const int &nMsg)
+{ asm { 0xe3, $nMsg, 0x17, 112, 0x01, 1 }; }
+
+__nolist void Set_Bead(const int &nProperty, const int &nValue)
+{ asm { 0xe3, $nProperty, 0xe3, $nValue, 0x17, 88, 0x01, 2 }; }
+
+#define SET_GAMEMODE 0
+#define SET_SPEED 1
+#define SET_VISIBILITY 2
+#define SET_TARGETTYPE 3
+#define SET_TARGETTYPEID 4
+#define SET_TARGETTYPETEAMID 5
+#define SET_TARGETTYPENOTE 6
+#define SET_ENABLESTATUS 7
+#define SET_DISABLESTATUS 8
+#define SET_SUSPENDSTATEBEADS 9
+#define SET_RESUMESTATEBEADS 10
+#define SET_DISPLAYMODE 11
+#define SET_RCDISABLE 12
+#define SET_RCCHANNEL 13
+#define SET_TARGETNOTE 14
+
+__nolist void SlidingTone_Bead(const int &nTone, const int &nStep,
+  const int &nTimes)
+{ asm { 0xe3, $nTone, 0xe3, $nStep, 0xe3, $nTimes, 0x17, 91, 0x01, 3 }; }
+
+__nolist void SlowDownMovement_Bead(const int &nMovement, const int &nTime)
+{ asm { 0xe3, $nMovement, 0xe3, $nTime, 0x17, 110, 0x01, 2 }; }
+
+__nolist void SpeedUpMovement_Bead(const int &nMovement, const int &nTime)
+{ asm { 0xe3, $nMovement, 0xe3, $nTime, 0x17, 111, 0x01, 2 }; }
+
+__nolist void TellToken_Bead(const int &nTokenIndex, const int &nTarget,
+  const int &nMax, const int &nMsg, const int &nHiByte, const int &nLoByte,
+  const int &nSound)
+{ asm { 0xe3, $nTokenIndex, 0xe3, $nTarget, 0xe3, $nMax,
+        0xe3, $nMsg, 0xe3, $nHiByte, 0xe3, $nLoByte,
+        0xe3, $nSound, 0x17, 75, 0x01, 7 }; }
+
+__nolist void TimedToken_Bead(const int &nTokenIndex, const int &nTokenType,
+  const int &nMax, const int &nTime)
+{ asm { 0xe3, $nTokenIndex, 0xe3, $nTokenType, 0xe3, $nMax,
+        0xe3, $nTime, 0x17, 73, 0x01, 4 }; }
+
+__nolist void TokenMessage_Bead(const int &nTokenType, const int &nTime)
+{ asm { 0xe3, $nTokenType, 0xe3, $nTime, 0x17, 114, 0x01, 2 }; }
+
+__nolist void TurnAway_Bead(const int &nTimes)
+{ asm { 0xe3, $nTimes, 0x17, 83, 0x01, 1 }; }
+
+__nolist void TwoTone_Bead(const int &nHiTone, const int &nLoTone,
+  const int &nTimes)
+{ asm { 0xe3, $nHiTone, 0xe3, $nLoTone, 0xe3, $nTimes, 0x17, 89, 0x01, 3 }; }
+
+__nolist void VarOp_Bead(const int &pVar, const int &nOp, const int &nValue)
+{ asm { 0xe3, $pVar, 0xe3, $nOp, 0xe3, $nValue, 0x17, 69, 0x01, 3 }; }
+
+#define VAR_SET 0
+#define VAR_INC 1
+#define VAR_DEC 2
+#define VAR_MUL 3
+#define VAR_DIV 4
+#define VAR_RND 5
+
+__nolist void VLL_Bead(const int &nVLL)
+{ asm { 0xe3, $nVLL, 0x17, 101, 0x01, 1 }; }
+
+__nolist void Wait_Bead(const int &nTime)
+{ asm { 0xe3, $nTime, 0x17, 113, 0x01, 1 }; }
+
+
+#endif
+
+#endif

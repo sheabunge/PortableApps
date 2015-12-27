@@ -1,0 +1,87 @@
+program SpyRcv
+{
+  #include "SpyBot.h"
+  #include "Events.h"
+  #include "Globals.h"
+
+  // Display 8 bit value on LEDs
+  sub DebugOut(x)
+  {
+    // bits 0-5 on green & red LEDs, green is MSB
+    led[iDisplay] =  (x & 0x17) | ((x & 8) * 4) | ((x & 32) / 4)
+    led[iYellowWarn] = (x / 64) & 1  // bit 6 on yellow LED
+    led[iVLL] =  (x / 128) & 1  // bit 7 on rear red LED
+  }
+
+  var aaaaaaa1
+  var aaaaaaa2
+  var aaaaaaa3
+  var aaaaaaa4
+  var aaaaaaa5
+  var msg
+  var pmsg
+  main
+  {
+    pmsg = @msg
+    // Turn off annoying IR pinging
+    ping[iInterval] = cDisablePings
+
+    // Receive IR messages on channel 2
+    link[iRxChannel] = iRCChannel2
+
+    start MessageHandler
+    start VLLHandler
+
+    forever  {  wait 100  }
+  }
+
+  watcher MessageHandler monitor PostEvent
+  {
+    Disp(ledSparkle)
+    wait 50
+    pmsg^ = message[ iRxIR, iHiByte ] *256 + message[ iRxIR, iLoByte ]
+    pmsg += 1
+/*
+    wait 50
+    pmsg^ = message[ iRxIR, iIndex ]
+    DebugOut(pmsg^)
+    wait 50
+    pmsg += 1
+    pmsg^ = message[ iRxIR, iCommand ]
+    DebugOut(pmsg^)
+    wait 50
+    pmsg += 1
+    pmsg^ = message[ iRxIR, iHiByte ]
+    DebugOut(pmsg^)
+    wait 50
+    pmsg += 1
+    pmsg^ = message[ iRxIR, iLoByte ]
+    DebugOut(pmsg^)
+    wait 50
+    pmsg += 1
+*/
+
+    if message[ iRxIR, iCommand ] = cCommandController
+    {
+        select message[ iRxIR, iHiByte ] * 256 + message[ iRxIR, iLoByte ]
+        {
+           when cControllerButton2 {
+             sound sndShocked
+             Disp(ledSparkle)
+           }
+           // RCX sent 0x92ab
+           when cControllerButton3 {
+             sound sndHitByLaser
+             Disp(ledAlarm)
+           }
+        }
+    }
+  }
+
+  watcher VLLHandler monitor VLLEvent
+  {
+    sound sndGotIt
+    DebugOut(vll)  // display VLL code on LEDs
+  }
+}
+

@@ -1,0 +1,39 @@
+program TestRCX2 {
+  #include "Spybot.h"
+
+  const OPTO_LIMIT = 10
+  var i = 0
+  
+  event BumperPressed when bumper.pressed
+  event LightGone when opto < OPTO_LIMIT
+
+  main {
+    ping[iInterval] = cDisablePings
+    led[iVLL] = 1
+    start HandleBumperPressed
+    start HandleLightGone
+    forever {
+      wait 100
+    }
+  }
+  
+  watcher HandleBumperPressed monitor BumperPressed
+  {
+    priority 3
+    try {
+      eeprom[0x80+i] = opto
+      i += 1
+      tone 36 for 5 wait 10 tone 36 for 5
+    } stop on fail
+  } restart on event
+
+  watcher HandleLightGone monitor LightGone
+  {
+    priority 7
+    try {
+      tone 36 for 5 wait 10 tone 36 for 5
+    }
+    stop on fail
+  } restart on event
+
+}

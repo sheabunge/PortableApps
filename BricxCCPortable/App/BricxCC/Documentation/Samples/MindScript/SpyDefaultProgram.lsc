@@ -1,0 +1,8 @@
+program SpybotDefaultProgram
+{
+  main
+  {
+    start 0
+  }
+}
+

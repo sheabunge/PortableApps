@@ -1,0 +1,152 @@
+#if defined(__SPY)
+
+#ifndef __SPY_ENGINE
+#define __SPY_ENGINE
+
+#ifndef __ENGINE_COUNTERS
+  #define __ENGINE_COUNTERS
+  #pragma reserve 0 2
+#endif
+
+// counters
+#define nGameWatcher 0
+#define nStateWatcher 1
+#define nBioTick 2
+
+// timers
+#define tGameTimer 0
+#define tStateTimer 1
+#define tTickTimer 2
+
+// events
+#define BumpEvent 0
+#define EnterEvent 1
+#define TargetEvent 2
+#define PostEvent 3
+#define ExitBeadEvent 4
+#define BlinkEvent 5
+#define VLLEvent 6
+
+// engine subroutines
+__nolist void ActivateToken(const int &nType) { asm { 0xe3, $nType, 0x17, 25, 0x01, 1 }; }
+//nActiveToken: time (0-255) bits 0-7, token type (1-255) bits 8-15
+#ifndef nActivetoken
+  #pragma reserve 16
+  #define nActiveToken (@16)
+#endif
+#define TOKEN_TIME_MASK 0x00ff
+#define TOKEN_TYPE_MASK 0xff00
+#define TOKEN_TYPE 0x0100
+
+#define TOKEN_NONE 0
+
+//timed tokens
+#define TOKEN_SHIELDS 0x0100
+#define TOKEN_REFLECT 0x0200
+#define TOKEN_MAGNET 0x0300
+#define TOKEN_CLOAK 0x0400
+#define TOKEN_QUADDAMAGE 0x0500
+#define TOKEN_REPULSE 0x0600
+#define TOKEN_FLASHBLIND 0x0700
+
+//speed & motor control tokens
+#define TOKEN_TURBO 0x1000
+#define TOKEN_FREEZE 0x1100
+#define TOKEN_SLOW 0x1200
+#define TOKEN_REVERSE 0x1300
+#define TOKEN_DIZZY 0x1400
+#define TOKEN_MINDCONTROL 0x1500
+#define TOKEN_MINDCONTROL_LINK1 0x1600
+#define TOKEN_MINDCONTROL_LINK2 0x1700
+#define TOKEN_MINDCONTROL_LINK3 0x1800
+
+//one-shot tokens
+#define TOKEN_BOOST 0x2000
+
+#define TOKEN_USER 0x4000
+//..reserved
+#define TOKEN_EXTRAS 0x8000
+
+//nToken table entries: count (0-63) bits 0-5, bead index (1-1023) bits 6-15
+#define TOKEN_COUNT_MASK 0x003f
+#define TOKEN_BEAD_MASK 0xffc0
+#define TOKEN_BEAD 0x0040
+
+__nolist void AdjustBlink(const int &nLight, const int &nThreshPct, const int &nHyst, const int &nTime)
+ { asm { 0xe3, $nLight, 0xe3, $nThreshPct, 0xe3, $nHyst, 0xe3, $nTime, 0x17, 10, 0x01, 4 }; }
+__nolist void CalibrateLight(int &nLight, const int &nTimes)
+{
+  asm { 0xe3, $nLight, 0xe3, $nTimes, 0x17, 9 };
+  asm { 0x14, $nLight : __ASM_NO_TYPE + __ASM_SMALL_VALUE, 0, 0xfe, 0xff };
+  asm { 0x01, 2 };
+}
+__nolist void CheckPost() { asm { 0x17, 1 }; }
+__nolist void CheckTokenTick() { asm { 0x17, 23 }; }
+__nolist void ClearTokens() { asm { 0x17, 20 }; }
+__nolist void DeactivateToken(const int &nType) { asm { 0xe3, $nType, 0x17, 27, 0x01, 1 }; }
+__nolist void FindBeadToken(const int &nTokIdx, int &pToken, int &nValue)
+{
+  asm { 0xe3, $nTokIdx, 0xe3, $pToken, 0xe3, $nValue, 0x17, 21 };
+  asm { 0x14, $pToken : __ASM_NO_TYPE + __ASM_SMALL_VALUE, 0, 0xfe, 0xff };
+  asm { 0x14, $nValue : __ASM_NO_TYPE + __ASM_SMALL_VALUE, 0, 0xff, 0xff };
+  asm { 0x01, 3 };
+}
+__nolist void FindFreeToken(int &pToken)
+{
+  asm { 0xe3, $pToken, 0x17, 22 };
+  asm { 0x14, $pToken : __ASM_NO_TYPE + __ASM_SMALL_VALUE, 0, 0xff, 0xff };
+  asm { 0x01, 1 };
+}
+__nolist void GetGotoSemaphore() { asm { 0x17, 4 }; }
+__nolist void GetMessageSemaphore() { asm { 0x17, 5 }; }
+__nolist void GetStateValue(const int &nIndex, int &nValue)
+{
+  asm { 0xe3, $nIndex, 0xe3, $nValue, 0x17, 12 };
+  asm { 0x14, $nValue : __ASM_NO_TYPE + __ASM_SMALL_VALUE, 0, 0xff, 0xff };
+  asm { 0x01, 2 };
+}
+__nolist void GotoNewState() { asm { 0x17, 2 }; }
+//__nolist void IsTokenActive(const int &nType) { asm { 0xe3, $nType, 0x17, 24, 0x01, 1 }; }
+__nolist void MainSub() { asm { 0x17, 0 }; }
+__nolist void RequestGoto(const int &nNewState) { asm { 0xe3, $nNewState, 0x17, 3, 0x01, 1 }; }
+__nolist void ResetEngine() { asm { 0x17, 11 }; }
+__nolist void ResetMotors() { asm { 0x17, 13 }; }
+__nolist void SelectTarget() { asm { 0x17, 16 }; }
+__nolist void SetDisplay(const int &nMode) { asm { 0xe3, $nMode, 0x17, 18, 0x01, 1 }; }
+
+#define DISPLAY_STATE 0x01
+#define DISPLAY_RANDOM 0x02
+#define DISPLAY_NOTHING 0x03
+#define DISPLAY_ONEVAR 0x11
+#define DISPLAY_TWOVAR 0x12
+#define DISPLAY_GAMETIMEREMAINING 0x13
+#define DISPLAY_RADAR 0x21
+#define DISPLAY_PROXIMITY 0x22
+#define DISPLAY_ANIMATION 0x30
+
+__nolist void SetSpyMaxPower() { asm { 0x17, 14 }; }
+
+#ifndef nSpeed
+  #pragma reserve 24
+  #define nSpeed (@24)
+#endif
+
+__nolist void SetPings(const int &nVis) { asm { 0xe3, $nVis, 0x17, 15, 0x01, 1 }; }
+
+#define VISIBILITY_STEALTH 0
+#define VISIBILITY_LOW 1
+#define VISIBILITY_NORMAL 2
+#define VISIBILITY_HIGH 3
+
+__nolist void StartStateBeadTask(const int &nNewState, const int &nNewZone)
+ { asm { 0xe3, $nNewState, 0xe3, $nNewZone, 0x17, 7, 0x01, 2 }; }
+__nolist void StopStateBeadTask() { asm { 0x17, 6 }; }
+__nolist void TokenTick(const int &nType) { asm { 0xe3, $nType, 0x17, 26, 0x01, 1 }; }
+__nolist void UpdateDisplayTarget() { asm { 0x17, 17 }; }
+__nolist void UpdateDisplayTick() { asm { 0x17, 19 }; }
+__nolist void WriteToken(const int &pToken, const int &nValue)
+ { asm { 0xe3, $pToken, 0xe3, $nValue, 0x17, 28, 0x01, 2 }; }
+
+#endif
+
+#endif

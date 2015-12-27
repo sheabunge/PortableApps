@@ -1,0 +1,21 @@
+#define THRESHOLD 40
+
+task main()
+{
+#if defined(__RCX)
+  SetSensor(SENSOR_2,SENSOR_LIGHT);
+#endif
+
+  OnFwd(OUT_A+OUT_B);
+  while (true)
+  {
+    if (SENSOR_2 > THRESHOLD)
+    {
+      OnRev(OUT_B);
+      Wait(10);
+      until (SENSOR_2 <= THRESHOLD);
+      OnFwd(OUT_A+OUT_B);
+    }
+  }
+}
+

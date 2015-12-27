@@ -1,0 +1,221 @@
+; comment -> G:\nxt\BricxCC\Documentation\Samples\LASM\4_if.asm
+; comment Success: Task   0 assembled
+; comment <-
+dseg segment
+
+  motor_pwr_0 sbyte
+  motor_pwr_1 sbyte
+  motor_pwr_2 sbyte
+
+  motor_dir_0 sbyte 1
+  motor_dir_1 sbyte 1
+  motor_dir_2 sbyte 1
+
+  motor_on_0  byte
+  motor_on_1  byte
+  motor_on_2  byte
+
+dseg ends
+
+dseg segment
+
+  timer_offset_0 sdword
+  timer_offset_1 sdword
+  timer_offset_2 sdword
+  timer_offset_3 sdword
+
+  timer_tick_0   sdword
+  timer_tick_1   sdword
+  timer_tick_2   sdword
+  timer_tick_3   sdword
+
+  timer_mutex_0  mutex
+  timer_mutex_1  mutex
+  timer_mutex_2  mutex
+  timer_mutex_3  mutex
+
+dseg ends
+dseg segment
+  vars   sword[]
+  m_vars mutex
+dseg ends
+
+dseg segment
+  volumeCtrl byte 3
+  volumeCtrlMute byte 0
+dseg ends
+
+dseg segment
+  task0_temp1 sword
+  task0_temp2 sword
+  task0_run   byte
+  running_tasks byte
+dseg ends
+
+; --------------------------------------
+thread main
+  precedes task0
+  gettick timer_offset_0
+  mov     timer_offset_1, timer_offset_0
+  mov     timer_offset_2, timer_offset_0
+  mov     timer_offset_3, timer_offset_0
+  arrinit vars, 0, 128
+  set task0_run, 1
+  set running_tasks, 1
+  exit
+endt
+
+; ----------------------------
+thread task0
+lbl_task0_start:
+  brtst EQ, lbl_task0_stop, running_tasks
+  brtst EQ, lbl_task0_start, task0_run
+
+; pwr
+  brtst EQ, lbl_task0_start, task0_run
+  set motor_pwr_0, 7
+  mul motor_pwr_0, motor_pwr_0, 14 ; scale 0-7 to 0-100
+  mul motor_pwr_0, motor_pwr_0, motor_dir_0 ; adjust direction
+  brtst EQ, lblNotOn0, motor_on_0
+  setout 0, Power,       motor_pwr_0, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn0:
+  set motor_pwr_1, 7
+  mul motor_pwr_1, motor_pwr_1, 14 ; scale 0-7 to 0-100
+  mul motor_pwr_1, motor_pwr_1, motor_dir_1 ; adjust direction
+  brtst EQ, lblNotOn1, motor_on_1
+  setout 1, Power,       motor_pwr_1, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn1:
+  set motor_pwr_2, 7
+  mul motor_pwr_2, motor_pwr_2, 14 ; scale 0-7 to 0-100
+  mul motor_pwr_2, motor_pwr_2, motor_dir_2 ; adjust direction
+  brtst EQ, lblNotOn2, motor_on_2
+  setout 2, Power,       motor_pwr_2, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn2:
+
+; dir
+  brtst EQ, lbl_task0_start, task0_run
+  set motor_dir_0, 1
+  mul motor_pwr_0, motor_pwr_0, motor_dir_0 ; adjust direction
+  brtst EQ, lblNotOn3, motor_on_0
+  setout 0, Power,       motor_pwr_0, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn3:
+  set motor_dir_1, 1
+  mul motor_pwr_1, motor_pwr_1, motor_dir_1 ; adjust direction
+  brtst EQ, lblNotOn4, motor_on_1
+  setout 1, Power,       motor_pwr_1, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn4:
+  set motor_dir_2, 1
+  mul motor_pwr_2, motor_pwr_2, motor_dir_2 ; adjust direction
+  brtst EQ, lblNotOn5, motor_on_2
+  setout 2, Power,       motor_pwr_2, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn5:
+
+; t0000006
+t0000006:
+
+; dir
+  brtst EQ, lbl_task0_start, task0_run
+  set motor_dir_0, 1
+  mul motor_pwr_0, motor_pwr_0, motor_dir_0 ; adjust direction
+  brtst EQ, lblNotOn6, motor_on_0
+  setout 0, Power,       motor_pwr_0, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn6:
+  set motor_dir_2, 1
+  mul motor_pwr_2, motor_pwr_2, motor_dir_2 ; adjust direction
+  brtst EQ, lblNotOn7, motor_on_2
+  setout 2, Power,       motor_pwr_2, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn7:
+
+; out
+  brtst EQ, lbl_task0_start, task0_run
+  set motor_on_0, 1
+  setout 0, Power, motor_pwr_0, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+  set motor_on_2, 1
+  setout 2, Power, motor_pwr_2, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+
+; wait
+  brtst EQ, lbl_task0_start, task0_run
+  set task0_temp1, 100
+dseg segment
+  now8 dword
+  then8 dword
+dseg ends
+  gettick now8
+  mul task0_temp1, task0_temp1, 10
+  add then8, now8, task0_temp1
+lblWaiting8:
+  gettick now8
+  brcmp LT, lblWaiting8, now8, then8
+
+; setv
+  brtst EQ, lbl_task0_start, task0_run
+; Unknown SRC/VALUE (4/1) for task0_temp1
+  replace vars, vars, 47, task0_temp1
+
+; chk
+  brtst EQ, lbl_task0_start, task0_run
+  set task0_temp1, 0
+  index task0_temp2, vars, 47
+  brcmp 5, t0000032, task0_temp1, task0_temp2
+
+; dir
+  brtst EQ, lbl_task0_start, task0_run
+  set motor_dir_2, -1
+  mul motor_pwr_2, motor_pwr_2, motor_dir_2 ; adjust direction
+  brtst EQ, lblNotOn9, motor_on_2
+  setout 2, Power,       motor_pwr_2, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn9:
+
+; out
+  brtst EQ, lbl_task0_start, task0_run
+  set motor_on_2, 1
+  setout 2, Power, motor_pwr_2, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+
+; jmp
+  brtst EQ, lbl_task0_start, task0_run
+  jmp t0000036
+
+; t0000032
+t0000032:
+
+; dir
+  brtst EQ, lbl_task0_start, task0_run
+  set motor_dir_0, -1
+  mul motor_pwr_0, motor_pwr_0, motor_dir_0 ; adjust direction
+  brtst EQ, lblNotOn10, motor_on_0
+  setout 0, Power,       motor_pwr_0, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+lblNotOn10:
+
+; out
+  brtst EQ, lbl_task0_start, task0_run
+  set motor_on_0, 1
+  setout 0, Power, motor_pwr_0, OutputMode,  OUT_MODE_MOTORON+OUT_MODE_BRAKE, RegMode,     OUT_REGMODE_IDLE, RunState,    OUT_RUNSTATE_RUNNING, UpdateFlags, UF_UPDATE_MODE+UF_UPDATE_SPEED
+
+; t0000036
+t0000036:
+
+; wait
+  brtst EQ, lbl_task0_start, task0_run
+  set task0_temp1, 85
+dseg segment
+  now11 dword
+  then11 dword
+dseg ends
+  gettick now11
+  mul task0_temp1, task0_temp1, 10
+  add then11, now11, task0_temp1
+lblWaiting11:
+  gettick now11
+  brcmp LT, lblWaiting11, now11, then11
+
+; jmp
+  brtst EQ, lbl_task0_start, task0_run
+  jmp t0000006
+
+  set task0_run, 0 ; stop yourself
+  sub running_tasks, running_tasks, 1
+  jmp lbl_task0_start
+lbl_task0_stop:
+  exit
+endt ; Task (0)
+

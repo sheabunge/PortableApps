@@ -1,0 +1,12 @@
+#define test 124
+
+task main()
+{
+  if (test == 124) {
+    SetSensorMode(IN_1, SENSOR_MODE_FAHRENHEIT+test);
+    SetSensorMode(IN_2, SENSOR_MODE_PERCENT);
+    SetSensorType(IN_3, SENSOR_TYPE_ROTATION);
+    SetSensorMode(IN_3, SENSOR_MODE_ROTATION);
+  }
+}
+

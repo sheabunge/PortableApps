@@ -1,0 +1,19 @@
+program midi2lsc {
+
+  macro MUSIC1 {
+  	wait 120
+  	tone 1319 for 1
+  	wait 7
+  	tone 1319 for 2
+  	wait 8
+  	tone 1319 for 1
+  	wait 3
+  }
+	
+  main {
+    try {
+      MUSIC1
+    } retry on fail
+  }
+}
+

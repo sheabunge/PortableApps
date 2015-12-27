@@ -1,0 +1,10 @@
+program FindDemo {
+//  #include "Spybot.h"
+  var nIndex
+  main {
+    find world[nIndex,3] = 1 {
+    }
+  }
+}
+
+

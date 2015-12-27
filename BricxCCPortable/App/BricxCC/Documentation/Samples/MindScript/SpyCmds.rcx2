@@ -1,0 +1,11 @@
+/*
+	pollm	1646,18
+	pollm	352,80
+	poll	50,0
+	polle	5
+*/
+	get map 	// get memory map (RCX2 & Spybot)
+	get world 	// Spybot: get world IR relation table (16 entries, 5 bytes each)
+	get target 	// Spybot: get current target world table index (0 to 15, 255 = no target)
+	get eeprom 5	// Spybot: read 16 byte eeprom block (0 to 255)
+

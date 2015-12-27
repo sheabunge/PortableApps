@@ -1,0 +1,53 @@
+#pragma reserve 1
+#define zzz @(1)
+
+__nolist void XXX(int &v, const int relsrc, const int crit, const int& thresh)
+{
+  asm { 0xd5, $v : 0x3000001, 0x2a + relsrc, crit + __type(thresh), $thresh : __ASM_NO_TYPE };
+}
+
+task main()
+{
+  int* p = 3;
+  int i;
+  for (i=0;i<7;i++)
+  {
+    *p = 0;
+    p++;
+  }
+  p = 3;
+   
+  ClearWorld();
+
+  Wait(200);
+   
+  int nIndex = -1;
+   
+  FindWorld(nIndex, SPY_RANGE, REL_EQ, RANGE_ANYWHERE);
+  XXX(zzz, SPY_RANGE, REL_NE, nIndex);
+  FindWorld(nIndex, SPY_RANGE, REL_GT, RANGE_NOWHERE);
+  while (nIndex != -1)
+  {
+    SetTargetID(nIndex);
+    if (Target(SPY_SHORTID) == 11)
+    {
+      *p = nIndex;
+      p++;
+      *p = Target(SPY_LINKID);
+      p++;
+      *p = Target(SPY_RANGE);
+      p++;
+      *p = Target(SPY_DIRECTION);
+      p++;
+      *p = Target(SPY_ASPECT);
+      p++;
+      *p = Target(SPY_INFO);
+      p++;
+      *p = Target(SPY_SHORTID);
+      p++;
+    }
+    FindWorld(nIndex, SPY_RANGE, REL_EQ, RANGE_ANYWHERE);
+//    FindWorld(nIndex, SPY_RANGE, REL_GT, RANGE_NOWHERE);
+  }
+}
+

@@ -1,0 +1,24 @@
+#pragma noinit
+
+#define C 262
+
+task main()
+{
+  // initialize container yellow to zero
+  int yellow = 0;
+
+red: // define the "red" land
+  if (!SENSOR_1)
+    PlaySound(0);
+  else
+  {
+    PlaySound(3);
+    yellow += 1;
+  }
+  if (yellow > 5)
+    PlayTone(C, 10);
+  else
+    goto red; // jump to the "red" land
+
+}
+

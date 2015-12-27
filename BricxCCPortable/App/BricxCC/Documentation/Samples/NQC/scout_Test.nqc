@@ -1,0 +1,5 @@
+#define _SCOUT_COMPAT
+task main()
+{
+  _GOn(1);
+}

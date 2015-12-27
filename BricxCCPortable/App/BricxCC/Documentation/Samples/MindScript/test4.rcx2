@@ -1,0 +1,10 @@
+program TestRCX2 {
+  const iVLL = 40
+//  #include "Spybot.h"
+
+  main {
+//    ping[iInterval] = cDisablePings
+    led[iVLL] = 1
+  }
+}
+

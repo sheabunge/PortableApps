@@ -1,0 +1,93 @@
+#include "spy.nqh"
+
+#define MANAS_ALL 4
+#define MANAS_1 5
+#define MANAS_2 6
+#define MANAS_3 7
+#define EM_FLOAT 0
+#define EM_OFF 8
+#define EM_FWD 7
+#define EM_REV 15
+
+int em1,em2,em3,em4,em5,em6; //Global motor control locations
+
+task main()
+{
+  SetPingInterval(0);
+  // This demo starts the manas comms task, then loops forever.
+  // In the loop, it steps through three control phases setting
+  // the motors to off, and then paired forward and reverse.
+
+  start manas;
+
+  while (true)
+  {
+    em1=EM_OFF;
+    em2=EM_OFF;
+    em3=EM_OFF;
+    em4=EM_OFF;
+    em5=EM_OFF;
+    em6=EM_OFF;
+
+    Wait(100);
+
+    em1=EM_FWD;
+    em2=EM_REV;
+    em3=EM_FWD;
+    em4=EM_REV;
+    em5=EM_FWD;
+    em6=EM_REV;
+
+    Wait(100);
+
+    em1=EM_FLOAT;
+    em2=EM_FLOAT;
+    em3=EM_FLOAT;
+    em4=EM_FLOAT;
+    em5=EM_FLOAT;
+    em6=EM_FLOAT;
+
+    Wait(100);
+
+    em1=EM_REV;
+    em2=EM_FWD;
+    em3=EM_REV;
+    em4=EM_FWD;
+    em5=EM_REV;
+    em6=EM_FWD;
+
+    Wait(100);
+  }
+}
+// The manas task continuously resends the motor settings.
+// When the RCX is halted, this task stops and the manas
+// motors automatically shut off
+
+task manas()
+{
+  SetTxType(TX_TYPE_USER);
+  SetTxBaud(TX_BAUD_4800);
+  SetTxDirection(1);
+
+  while (true)
+  {
+    // Set the first unit two message bytes and send them
+    SetSerialData(0,MANAS_1*0x10+em1);
+    SetSerialData(1,em2*0x10+0x10-((MANAS_1+em1+em2)&0xf));
+    SendSerial(0,2);
+
+    // Set the second unit two message bytes and send them
+    SetSerialData(0,MANAS_2*0x10+em3);
+    SetSerialData(1,em4*0x10+0x10-((MANAS_2+em3+em4)&0xf));
+    SendSerial(0,2);
+
+    // Set the third unit two message bytes and send them
+    SetSerialData(0,MANAS_3*0x10+em5);
+    SetSerialData(1,em6*0x10+0x10-((MANAS_3+em5+em6)&0xf));
+    SendSerial(0,2);
+
+    // Delay for a while so we can resend them regularly
+    Wait(10);
+  }
+}
+

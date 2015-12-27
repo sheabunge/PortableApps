@@ -1,0 +1,158 @@
+#pragma noinit
+
+#include "SpyGlobals.nqh"
+#include "SpyEvents.nqh"
+
+#define right 0 // output 1
+#define left 1 // output 2
+
+#define cAdvance 1
+#define cRetreat 2
+
+//int nMode;
+#pragma reserve 9
+#define nMode (@9)
+
+task main()
+{
+  // initialize our global variable
+  nMode = cAdvance;
+
+  SetPriority(2);
+  
+  ResetMotors();
+  ResetEngine();
+  
+  nStatus |= EVENT_RUNBEADS;
+  
+  SetAnimation(ANIMATION_SCAN);
+
+  repeat(2)
+  {
+    PlayTone(2232, 10); Wait(20);
+    PlayTone(1736, 10); Wait(20);
+    PlayTone(1202, 10); Wait(35);
+
+    PlayTone(1202, 10); Wait(20);
+    PlayTone(1736, 10); Wait(20);
+    PlayTone(2232, 10); Wait(35);
+  }
+  
+  SetLED(LED_MODE_ON, 0);
+
+  ResetMessages();
+
+  start MyPostWatcher;
+//  StartTask(cBuiltInPostWatcher);
+  start MyBumpWatcher;
+//  StartTask(cBuiltInBumpWatcher);
+
+  while(true)
+  {
+    SelectTarget();
+
+    if (Target(SPY_RANGE) > RANGE_ANYWHERE)
+    {
+      if (nMode == cAdvance)
+      {
+        if (Target(SPY_RANGE) == RANGE_THERE)
+          PlaySound(SOUND_MAGNET);
+        Advance_Bead(RANGE_HERE, 100);
+      }
+      else
+      {
+        if (Target(SPY_RANGE) == RANGE_HERE)
+          PlaySound(SOUND_REPULSE);
+        Retreat_Bead(RANGE_HERE, 100);
+      }
+    }
+    else
+    {
+      BasicMovement_Bead(MOVE_BASIC_SPIN_LEFT, 50);
+      Fx_Bead(FX_TWITTER, 25);
+      RandomMovement_Bead(MOVE_RANDOM_FORWARD, 100);
+      FancyMovement_Bead(MOVE_FANCY_BUG_FORWARD, 1, 100);
+      Wait(25);
+    }
+  }
+}
+
+task BumpWatcher()
+{
+}
+
+task PowerUpTask()
+{
+  int nLevel = EEPROM(EEPROM_USERLEVEL);
+  SetLED(LED_MODE_YELLOW, 0);
+  Wait(50);
+  if (nLevel < 16)
+  {
+    nStatus = EVENT_RUNBEADS;
+    CountDown_Bead(nLevel, COUNT_DIR_UP, 50);
+  }
+  ResetMotors();
+  Wait(100);
+}
+
+task MyPostWatcher()
+{
+  while (true)
+  {
+    monitor(EVENT_MASK(PostEvent))
+    {
+      Wait(32767);
+    }
+    catch
+    {
+      SetPriority(0);
+      if ((RxMessageChannel() & MSG_IR) > 0)
+      {
+        SetRxMessageLock(MSG_IR);
+        
+        if (RxMessage(MSG_IR, MSG_COMMAND) == COMMAND_CONTROLLER)
+        {
+          nControllerButton = RxMessage(MSG_IR, MSG_HI_BYTE);
+          nControllerButton *= 256;
+          nControllerButton |= RxMessage(MSG_IR, MSG_LO_BYTE);
+        }
+        
+        switch(nControllerButton)
+        {
+          case CONTROLLER_BUTTON1:
+            PlayTone(3401, 3);
+            nMode = cAdvance;
+            break;
+          case CONTROLLER_BUTTON2:
+            Fire_Bead(CMD_FIRE_LASER,FIRE_TYPE_THERE_NARROW,-1,0,0,SOUND_FIRE_LASER,50);
+            break;
+          case CONTROLLER_BUTTON3:
+            PlayTone(2801, 3);
+            nMode = cRetreat;
+            break;
+        }
+        SetRxMessageLock(MSG_NONE);
+      }
+    }
+  }
+}
+
+task MyBumpWatcher()
+{
+  while (true)
+  {
+    monitor(EVENT_MASK(BumpEvent))
+    {
+      Wait(32767);
+    }
+    catch
+    {
+      SetPriority(1);
+      PlaySound_Bead(SOUND_OUCH, 0);
+      BasicMovement_Bead(MOVE_BASIC_BACKWARD, 50);
+      BasicMovement_Bead(MOVE_BASIC_SPIN_RIGHT, 50);
+    }
+  }
+}
+
+

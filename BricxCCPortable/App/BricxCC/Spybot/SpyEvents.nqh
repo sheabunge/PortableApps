@@ -1,0 +1,59 @@
+#if defined(__SPY)
+
+#ifndef __SPY_EVENTS
+#define __SPY_EVENTS
+
+#define bump SENSOR_1 // sensor 1
+#define opto SENSOR_2 // sensor 2
+
+// events
+#ifndef __SPYBOT_EVENT_CONSTANTS
+#define __SPYBOT_EVENT_CONSTANTS
+
+#define BumpEvent 0
+#define EnterEvent 1
+#define TargetEvent 2
+#define PostEvent 3
+#define ExitBeadEvent 4
+#define BlinkEvent 5
+#define VLLEvent 6
+
+#endif
+
+__nolist void _SpyEventsInit()
+{
+  SetSensorMode(bump, SENSOR_MODE_BOOL);
+  SetSensorMode(opto, SENSOR_MODE_PERCENT);
+
+//  event BumpEvent when bumper.pressed
+  SetEvent(BumpEvent, bump, EVENT_TYPE_PRESSED);
+  SetLowerLimit(BumpEvent, 0);
+  SetUpperLimit(BumpEvent, 0);
+
+//	event EnterEvent when world.enter
+  SetEvent(EnterEvent, VLL(), EVENT_TYPE_ENTRY_FOUND);
+
+//  event TargetEvent when target.change
+  SetEvent(TargetEvent, VLL(), EVENT_TYPE_ENTRY_CHANGED);
+
+//  event PostEvent when message
+  SetEvent(PostEvent, VLL(), EVENT_TYPE_MSG_RECEIVED);
+
+//	event BlinkEvent when opto.click
+  SetEvent(BlinkEvent, opto, EVENT_TYPE_CLICK);
+
+//  event VLLEvent when VLL  // event #6
+  SetEvent(VLLEvent, VLL(), EVENT_TYPE_VLL_MSG_RECEIVED);
+  
+   // calibrate the light sensor
+  CalibrateEvent(BlinkEvent, 32, 32, 8);
+  Wait(10);
+  SetHysteresis(BlinkEvent, 1);
+}
+
+// hook new initialization function
+#pragma init _SpyEventsInit
+
+#endif
+
+#endif
